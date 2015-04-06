@@ -1,0 +1,580 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Android自定义控件布局之OnLayout | An Android Coder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="CoderRobin">
+    
+
+    
+    <meta name="description" content="在view的绘制过程中,会依次调用view的measure方法,layout方法,draw方法其中layout方法即对子控件测量完成后确定每个子控件相对父控件的位置注意到该方法为final方法,不可重写,其中调用到了onLayout,可在此方法中设置每个子视图的坐标12345678910111213# layout方法public final void layout(int l, int t, i">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android自定义控件布局之OnLayout">
+<meta property="og:url" content="http://coderrobin.com/2015/01/26/Android自定义控件布局之OnLayout/index.html">
+<meta property="og:site_name" content="An Android Coder">
+<meta property="og:description" content="在view的绘制过程中,会依次调用view的measure方法,layout方法,draw方法其中layout方法即对子控件测量完成后确定每个子控件相对父控件的位置注意到该方法为final方法,不可重写,其中调用到了onLayout,可在此方法中设置每个子视图的坐标12345678910111213# layout方法public final void layout(int l, int t, i">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android自定义控件布局之OnLayout">
+<meta name="twitter:description" content="在view的绘制过程中,会依次调用view的measure方法,layout方法,draw方法其中layout方法即对子控件测量完成后确定每个子控件相对父控件的位置注意到该方法为final方法,不可重写,其中调用到了onLayout,可在此方法中设置每个子视图的坐标12345678910111213# layout方法public final void layout(int l, int t, i">
+
+    
+    <link rel="alternative" href="/atom.xml" title="An Android Coder" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="An Android Coder">An Android Coder</a></h1>
+				<h2 class="blog-motto">CoderRobin&#39;s Blog</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:coderrobin.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/01/26/Android自定义控件布局之OnLayout/" title="Android自定义控件布局之OnLayout" itemprop="url">Android自定义控件布局之OnLayout</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://coderrobin.com/about" title="CoderRobin" target="_blank" itemprop="author">CoderRobin</a>
+		
+  <p class="article-time">
+    <time datetime="2015-01-26T14:56:32.000Z" itemprop="datePublished"> 发表于 Jan 26 2015</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#onLayout方法"><span class="toc-number">1.</span> <span class="toc-text">onLayout方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#FrameLayout中的onLayout"><span class="toc-number">1.1.</span> <span class="toc-text">FrameLayout中的onLayout</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LinearLayout中的onLayout"><span class="toc-number">1.2.</span> <span class="toc-text">LinearLayout中的onLayout</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">2.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p>在view的绘制过程中,会依次调用view的measure方法,layout方法,draw方法<br>其中layout方法即对子控件测量完成后确定每个子控件相对父控件的位置<br>注意到该方法为final方法,不可重写,其中调用到了onLayout,可在此方法中设置每个子视图的坐标<br><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># layout方法</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="function"><span class="keyword">void</span> <span class="title">layout</span><span class="params">(<span class="keyword">int</span> l, <span class="keyword">int</span> t, <span class="keyword">int</span> r, <span class="keyword">int</span> b)</span> </span>&#123; </span><br><span class="line">    <span class="keyword">boolean</span> changed = setFrame(l, t, r, b); <span class="comment">//保存相对于父视图的坐标轴 </span></span><br><span class="line">    <span class="keyword">if</span> (changed || (mPrivateFlags &amp; LAYOUT_REQUIRED) == LAYOUT_REQUIRED) &#123; </span><br><span class="line">        <span class="keyword">if</span> (ViewDebug.TRACE_HIERARCHY) &#123;  </span><br><span class="line">            ViewDebug.trace(<span class="keyword">this</span>, ViewDebug.HierarchyTraceType.ON_LAYOUT);  </span><br><span class="line">        &#125;  </span><br><span class="line">  </span><br><span class="line">        onLayout(changed, l, t, r, b);<span class="comment">//回调onLayout函数 ，设置每个子视图的布局  </span></span><br><span class="line">        mPrivateFlags &amp;= ~LAYOUT_REQUIRED;  </span><br><span class="line">    &#125; </span><br><span class="line">    mPrivateFlags &amp;= ~FORCE_LAYOUT; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>layout方法中首先调用了setFrame方法,该方法作用为保存父控件传过来的坐标数据,以确定本控件的位置,其中在保存前和保存后两次invalidate进行绘制,且当位置有改变时调用onSizeChanged方法<br><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">protected</span> <span class="function"><span class="keyword">boolean</span> <span class="title">setFrame</span><span class="params">(<span class="keyword">int</span> left, <span class="keyword">int</span> top, <span class="keyword">int</span> right, <span class="keyword">int</span> bottom)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">boolean</span> changed = <span class="keyword">false</span>;  </span><br><span class="line">  </span><br><span class="line">        ......  </span><br><span class="line">  </span><br><span class="line">        <span class="keyword">if</span> (mLeft != left || mRight != right || mTop != top || mBottom != bottom) &#123;  </span><br><span class="line">            changed = <span class="keyword">true</span>;  </span><br><span class="line">  </span><br><span class="line">            <span class="comment">// Remember our drawn bit  </span></span><br><span class="line">            <span class="keyword">int</span> drawn = mPrivateFlags &amp; DRAWN;  </span><br><span class="line">  </span><br><span class="line">            <span class="comment">// 绘制一次旧位置的视图</span></span><br><span class="line">            invalidate();  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">            <span class="keyword">int</span> oldWidth = mRight - mLeft;  </span><br><span class="line">            <span class="keyword">int</span> oldHeight = mBottom - mTop;  </span><br><span class="line">  </span><br><span class="line">            mLeft = left;  </span><br><span class="line">            mTop = top;  </span><br><span class="line">            mRight = right;  </span><br><span class="line">            mBottom = bottom;  </span><br><span class="line">  </span><br><span class="line">            mPrivateFlags |= HAS_BOUNDS;  </span><br><span class="line">  </span><br><span class="line">            <span class="keyword">int</span> newWidth = right - left;  </span><br><span class="line">            <span class="keyword">int</span> newHeight = bottom - top;  </span><br><span class="line">  </span><br><span class="line">            <span class="keyword">if</span> (newWidth != oldWidth || newHeight != oldHeight) &#123;  </span><br><span class="line">                onSizeChanged(newWidth, newHeight, oldWidth, oldHeight);  </span><br><span class="line">            &#125;  </span><br><span class="line">  </span><br><span class="line">            <span class="keyword">if</span> ((mViewFlags &amp; VISIBILITY_MASK) == VISIBLE) &#123;  </span><br><span class="line">                <span class="comment">// If we are visible, force the DRAWN bit to on so that  </span></span><br><span class="line">                <span class="comment">// this invalidate will go through (at least to our parent).  </span></span><br><span class="line">                <span class="comment">// This is because someone may have invalidated this view  </span></span><br><span class="line">                <span class="comment">// before this call to setFrame came in, therby clearing  </span></span><br><span class="line">                <span class="comment">// the DRAWN bit.  </span></span><br><span class="line">                mPrivateFlags |= DRAWN;  </span><br><span class="line">                invalidate();  </span><br><span class="line">            &#125;  </span><br><span class="line">  </span><br><span class="line">            <span class="comment">// Reset drawn bit to original value (invalidate turns it off)  </span></span><br><span class="line">            mPrivateFlags |= drawn;  </span><br><span class="line">  </span><br><span class="line">            mBackgroundSizeChanged = <span class="keyword">true</span>;  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="keyword">return</span> changed;  </span><br><span class="line">    &#125; </span><br><span class="line">  </span><br><span class="line">    ...... </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="onLayout方法">onLayout方法</h1><p>layout()调用了onLayout方法,该方法确定子控件的位置<br>    @Override<br>    protected abstract void onLayout(boolean changed, int l, int t, int r, int b);<br>该方法被定义为抽象方法，在继承ViewGroup时必须要重写该方法。<br>以下以frameLayout的onLayout和LinearLayout的onLayout方法举例自定义的onLayout方法要怎么写</p>
+<h2 id="FrameLayout中的onLayout">FrameLayout中的onLayout</h2><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> onLayout(<span class="built_in">boolean</span> changed, <span class="built_in">int</span> left, <span class="built_in">int</span> top, <span class="built_in">int</span> right, <span class="built_in">int</span> bottom) &#123;  </span><br><span class="line">        <span class="keyword">final</span> <span class="built_in">int</span> count = getChildCount();  </span><br><span class="line">  </span><br><span class="line">        <span class="keyword">final</span> <span class="built_in">int</span> parentLeft = mPaddingLeft + mForegroundPaddingLeft;  </span><br><span class="line">        <span class="keyword">final</span> <span class="built_in">int</span> parentRight = right - left - mPaddingRight - mForegroundPaddingRight;  </span><br><span class="line">  </span><br><span class="line">        <span class="keyword">final</span> <span class="built_in">int</span> parentTop = mPaddingTop + mForegroundPaddingTop;  </span><br><span class="line">        <span class="keyword">final</span> <span class="built_in">int</span> parentBottom = bottom - top - mPaddingBottom - mForegroundPaddingBottom;  </span><br><span class="line">  </span><br><span class="line">        mForegroundBoundsChanged = <span class="keyword">true</span>;  </span><br><span class="line">  </span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; count; i++) &#123;  </span><br><span class="line">            <span class="keyword">final</span> View child = getChildAt(i);  </span><br><span class="line">            <span class="keyword">if</span> (child.getVisibility() != GONE) &#123;  </span><br><span class="line">                <span class="keyword">final</span> LayoutParams lp = (LayoutParams) child.getLayoutParams();  </span><br><span class="line">  </span><br><span class="line">                <span class="keyword">final</span> <span class="built_in">int</span> <span class="variable">width</span> = child.getMeasuredWidth();  </span><br><span class="line">                <span class="keyword">final</span> <span class="built_in">int</span> <span class="variable">height</span> = child.getMeasuredHeight();  </span><br><span class="line">  </span><br><span class="line">                <span class="built_in">int</span> childLeft = parentLeft;  </span><br><span class="line">                <span class="built_in">int</span> childTop = parentTop;  </span><br><span class="line">  </span><br><span class="line">                <span class="keyword">final</span> <span class="built_in">int</span> gravity = lp.gravity;  </span><br><span class="line">  </span><br><span class="line">                <span class="keyword">if</span> (gravity != -<span class="number">1</span>) &#123;  </span><br><span class="line">                    <span class="keyword">final</span> <span class="built_in">int</span> horizontalGravity = gravity &amp; Gravity.HORIZONTAL_GRAVITY_MASK;  </span><br><span class="line">                    <span class="keyword">final</span> <span class="built_in">int</span> verticalGravity = gravity &amp; Gravity.VERTICAL_GRAVITY_MASK;  </span><br><span class="line">                 <span class="comment">//根据gravity计算childLeft和childTop</span></span><br><span class="line">                    <span class="keyword">switch</span> (horizontalGravity) &#123;  </span><br><span class="line">                        <span class="keyword">case</span> Gravity.LEFT:  </span><br><span class="line">                            childLeft = parentLeft + lp.leftMargin;  </span><br><span class="line">                            <span class="keyword">break</span>;  </span><br><span class="line">                        <span class="keyword">case</span> Gravity.CENTER_HORIZONTAL:  </span><br><span class="line">                            childLeft = parentLeft + (parentRight - parentLeft - <span class="variable">width</span>) / <span class="number">2</span> +  </span><br><span class="line">                                    lp.leftMargin - lp.rightMargin;  </span><br><span class="line">                            <span class="keyword">break</span>;  </span><br><span class="line">                        <span class="keyword">case</span> Gravity.RIGHT:  </span><br><span class="line">                            childLeft = parentRight - <span class="variable">width</span> - lp.rightMargin;  </span><br><span class="line">                            <span class="keyword">break</span>;  </span><br><span class="line">                        <span class="keyword">default</span>:  </span><br><span class="line">                            childLeft = parentLeft + lp.leftMargin;  </span><br><span class="line">                    &#125;  </span><br><span class="line">                    <span class="keyword">switch</span> (verticalGravity) &#123;  </span><br><span class="line">                        <span class="keyword">case</span> Gravity.TOP:  </span><br><span class="line">                            childTop = parentTop + lp.topMargin;  </span><br><span class="line">                            <span class="keyword">break</span>;  </span><br><span class="line">                        <span class="keyword">case</span> Gravity.CENTER_VERTICAL:  </span><br><span class="line">                            childTop = parentTop + (parentBottom - parentTop - <span class="variable">height</span>) / <span class="number">2</span> +  </span><br><span class="line">                                    lp.topMargin - lp.bottomMargin;  </span><br><span class="line">                            <span class="keyword">break</span>;  </span><br><span class="line">                        <span class="keyword">case</span> Gravity.BOTTOM:  </span><br><span class="line">                            childTop = parentBottom - <span class="variable">height</span> - lp.bottomMargin;  </span><br><span class="line">                            <span class="keyword">break</span>;  </span><br><span class="line">                        <span class="keyword">default</span>:  </span><br><span class="line">                            childTop = parentTop + lp.topMargin;  </span><br><span class="line">                    &#125;  </span><br><span class="line">                &#125;  </span><br><span class="line">  <span class="comment">//设置child的layout</span></span><br><span class="line">                child.layout(childLeft, childTop, childLeft + <span class="variable">width</span>, childTop + <span class="variable">height</span>);  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    ......  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="LinearLayout中的onLayout">LinearLayout中的onLayout</h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span> </span><br><span class="line">   <span class="keyword">protected</span> <span class="typename">void</span> onLayout(<span class="typename">boolean</span> changed, <span class="typename">int</span> l, <span class="typename">int</span> t, <span class="typename">int</span> r, <span class="typename">int</span> b) &#123; </span><br><span class="line">       <span class="keyword">if</span> (mOrientation == VERTICAL) &#123;  </span><br><span class="line">           layoutVertical();  </span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;  </span><br><span class="line">           layoutHorizontal();  </span><br><span class="line">       &#125;  </span><br><span class="line">   &#125; </span><br><span class="line"></span><br><span class="line"><span class="typename">void</span> layoutVertical() &#123; </span><br><span class="line">        <span class="keyword">final</span> <span class="typename">int</span> paddingLeft = mPaddingLeft;  </span><br><span class="line">        <span class="typename">int</span> childTop = mPaddingTop;  </span><br><span class="line">        <span class="typename">int</span> childLeft;  </span><br><span class="line">        <span class="comment">// Where right end of child should go  </span></span><br><span class="line">        <span class="keyword">final</span> <span class="typename">int</span> width = mRight - mLeft;  </span><br><span class="line">        <span class="typename">int</span> childRight = width - mPaddingRight;  </span><br><span class="line">        <span class="comment">// Space available for child  </span></span><br><span class="line">        <span class="typename">int</span> childSpace = width - paddingLeft - mPaddingRight;  </span><br><span class="line">        <span class="keyword">final</span> <span class="typename">int</span> count = getVirtualChildCount();  </span><br><span class="line">        <span class="keyword">final</span> <span class="typename">int</span> majorGravity = mGravity &amp; Gravity.VERTICAL_GRAVITY_MASK;  </span><br><span class="line">        <span class="keyword">final</span> <span class="typename">int</span> minorGravity = mGravity &amp; Gravity.HORIZONTAL_GRAVITY_MASK;  </span><br><span class="line">        <span class="keyword">if</span> (majorGravity != Gravity.TOP) &#123;  </span><br><span class="line">           <span class="keyword">switch</span> (majorGravity) &#123;  </span><br><span class="line">               <span class="keyword">case</span> Gravity.<span class="string">BOTTOM:</span>  </span><br><span class="line">                   <span class="comment">// mTotalLength contains the padding already, we add the top  </span></span><br><span class="line">                   <span class="comment">// padding to compensate  </span></span><br><span class="line">                   childTop = mBottom - mTop + mPaddingTop - mTotalLength;  </span><br><span class="line">                   <span class="keyword">break</span>;  </span><br><span class="line">               <span class="keyword">case</span> Gravity.<span class="string">CENTER_VERTICAL:</span>  </span><br><span class="line">                   childTop += ((mBottom - mTop)  - mTotalLength) / <span class="number">2</span>;  </span><br><span class="line">                   <span class="keyword">break</span>;  </span><br><span class="line">           &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="keyword">for</span> (<span class="typename">int</span> i = <span class="number">0</span>; i &lt; count; i++) &#123;  </span><br><span class="line">            <span class="keyword">final</span> View child = getVirtualChildAt(i);  </span><br><span class="line">            <span class="keyword">if</span> (child == <span class="literal">null</span>) &#123;  </span><br><span class="line">                childTop += measureNullChild(i);  </span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (child.getVisibility() != GONE) &#123;  </span><br><span class="line">                <span class="keyword">final</span> <span class="typename">int</span> childWidth = child.getMeasuredWidth();  </span><br><span class="line">                <span class="keyword">final</span> <span class="typename">int</span> childHeight = child.getMeasuredHeight();  </span><br><span class="line">                <span class="keyword">final</span> LinearLayout.LayoutParams lp =  </span><br><span class="line">                        (LinearLayout.LayoutParams) child.getLayoutParams();  </span><br><span class="line">                <span class="typename">int</span> gravity = lp.gravity;  </span><br><span class="line">                <span class="keyword">if</span> (gravity &lt; <span class="number">0</span>) &#123;  </span><br><span class="line">                    gravity = minorGravity;  </span><br><span class="line">                &#125;  </span><br><span class="line">                <span class="keyword">switch</span> (gravity &amp; Gravity.HORIZONTAL_GRAVITY_MASK) &#123;  </span><br><span class="line">                    <span class="keyword">case</span> Gravity.<span class="string">LEFT:</span>  </span><br><span class="line">                        childLeft = paddingLeft + lp.leftMargin;  </span><br><span class="line">                        <span class="keyword">break</span>;  </span><br><span class="line">                    <span class="keyword">case</span> Gravity.<span class="string">CENTER_HORIZONTAL:</span>  </span><br><span class="line">                        childLeft = paddingLeft + ((childSpace - childWidth) / <span class="number">2</span>)  </span><br><span class="line">                                + lp.leftMargin - lp.rightMargin;  </span><br><span class="line">                        <span class="keyword">break</span>;  </span><br><span class="line">                    <span class="keyword">case</span> Gravity.<span class="string">RIGHT:</span>  </span><br><span class="line">                        childLeft = childRight - childWidth - lp.rightMargin;  </span><br><span class="line">                        <span class="keyword">break</span>;  </span><br><span class="line"><span class="label">                    default:</span>  </span><br><span class="line">                        childLeft = paddingLeft;  </span><br><span class="line">                        <span class="keyword">break</span>;  </span><br><span class="line">                &#125;  </span><br><span class="line">                childTop += lp.topMargin;  </span><br><span class="line">                setChildFrame(child, childLeft, childTop + getLocationOffset(child),  </span><br><span class="line">                        childWidth, childHeight);  </span><br><span class="line">                childTop += childHeight + lp.bottomMargin + getNextLocationOffset(child);  </span><br><span class="line">                i += getChildrenSkipCount(child, i);  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="总结">总结</h1><p>自定义控件时，在onLayout方法中，需根据父控件的padding、子控件的margin以及父控件的gravity以及子控件的lp.gravity(即layout gravity）、子控件的getMeasuredWidth和getMeasuredHeight确定各子控件的位置。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/自定义控件布局/">自定义控件布局</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://coderrobin.com/2015/01/26/Android自定义控件布局之OnLayout/" data-title="Android自定义控件布局之OnLayout | An Android Coder" data-tsina="undefined" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/01/28/android-view动画基础/" title="android 控件动画基础">
+  <strong>上一篇：</strong><br/>
+  <span>
+  android 控件动画基础</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/01/25/Android自定义控件之OnMeasure/"  title="Android自定义控件之OnMeasure">
+ <strong>下一篇：</strong><br/> 
+ <span>Android自定义控件之OnMeasure
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/01/26/Android自定义控件布局之OnLayout/" data-title="Android自定义控件布局之OnLayout" data-url="http://coderrobin.com/2015/01/26/Android自定义控件布局之OnLayout/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#onLayout方法"><span class="toc-number">1.</span> <span class="toc-text">onLayout方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#FrameLayout中的onLayout"><span class="toc-number">1.1.</span> <span class="toc-text">FrameLayout中的onLayout</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LinearLayout中的onLayout"><span class="toc-number">1.2.</span> <span class="toc-text">LinearLayout中的onLayout</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">2.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Android/" title="Android">Android<sup>15</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/读书笔记/" title="读书笔记">读书笔记<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/动画/" title="动画">动画<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/自定义控件/" title="自定义控件">自定义控件<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Annotation/" title="Annotation">Annotation<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ReentrantLock/" title="ReentrantLock">ReentrantLock<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/fragment/" title="fragment">fragment<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/viewpager/" title="viewpager">viewpager<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/uil/" title="uil">uil<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CustomViews/" title="CustomViews">CustomViews<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/自定义控件布局/" title="自定义控件布局">自定义控件布局<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PagerSlidingTabStrip/" title="PagerSlidingTabStrip">PagerSlidingTabStrip<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EventBus/" title="EventBus">EventBus<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/volley/" title="volley">volley<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/反射/" title="反射">反射<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/RecyclerView/" title="RecyclerView">RecyclerView<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LoaderManager/" title="LoaderManager">LoaderManager<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.codekk.com/" target="_blank" title="codekk开源项目解析">codekk开源项目解析</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.trinea.cn/" target="_blank" title="Trinea">Trinea</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.daimajia.com/" target="_blank" title="代码家">代码家</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://stormzhang.com/" target="_blank" title="stormzhang">stormzhang</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/xiaanming/" target="_blank" title="夏安明">夏安明</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/bboyfeiyu" target="_blank" title="Mr.Simple">Mr.Simple</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/aigestudio/" target="_blank" title="AigeSudio">AigeSudio</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.rainstops.com/" target="_blank" title="rainstops">rainstops</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/sunzn/" target="_blank" title="sunzn&#39;Blog">sunzn&#39;Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/guolin_blog" target="_blank" title="郭霖">郭霖</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/lmj623565791" target="_blank" title="鸿洋">鸿洋</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m CoderRobin. <br/>
+			Welcome here to enjoy android.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/206001274" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/CoderRobin" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:rzb7873@hotmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="http://coderrobin.com/about" target="_blank" title="CoderRobin">CoderRobin</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"rzb7873"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

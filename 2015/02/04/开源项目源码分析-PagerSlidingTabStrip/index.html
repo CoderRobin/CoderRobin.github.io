@@ -1,0 +1,591 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>开源项目源码分析-PagerSlidingTabStrip | An Android Coder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="CoderRobin">
+    
+
+    
+    <meta name="description" content="最近在项目中用到了PagerSlidingTabStrip（github地址），于是就看了下其实现，发现实现不是特别复杂，算是一个学习自定义控件的不错的例子，于是便拿出来跟大家分享下。PagerSlidingTabStrip控件效果如下，支持viewpager滑动时，选项卡联动
+使用方式下面我们先来看看其使用方式
+xml中配置：12345&amp;lt;com.astuetz.PagerSlidingTa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="开源项目源码分析-PagerSlidingTabStrip">
+<meta property="og:url" content="http://coderrobin.com/2015/02/04/开源项目源码分析-PagerSlidingTabStrip/index.html">
+<meta property="og:site_name" content="An Android Coder">
+<meta property="og:description" content="最近在项目中用到了PagerSlidingTabStrip（github地址），于是就看了下其实现，发现实现不是特别复杂，算是一个学习自定义控件的不错的例子，于是便拿出来跟大家分享下。PagerSlidingTabStrip控件效果如下，支持viewpager滑动时，选项卡联动
+使用方式下面我们先来看看其使用方式
+xml中配置：12345&amp;lt;com.astuetz.PagerSlidingTa">
+<meta property="og:image" content="/image/pagerslidingtab.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="开源项目源码分析-PagerSlidingTabStrip">
+<meta name="twitter:description" content="最近在项目中用到了PagerSlidingTabStrip（github地址），于是就看了下其实现，发现实现不是特别复杂，算是一个学习自定义控件的不错的例子，于是便拿出来跟大家分享下。PagerSlidingTabStrip控件效果如下，支持viewpager滑动时，选项卡联动
+使用方式下面我们先来看看其使用方式
+xml中配置：12345&amp;lt;com.astuetz.PagerSlidingTa">
+
+    
+    <link rel="alternative" href="/atom.xml" title="An Android Coder" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="An Android Coder">An Android Coder</a></h1>
+				<h2 class="blog-motto">CoderRobin&#39;s Blog</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:coderrobin.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/02/04/开源项目源码分析-PagerSlidingTabStrip/" title="开源项目源码分析-PagerSlidingTabStrip" itemprop="url">开源项目源码分析-PagerSlidingTabStrip</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://coderrobin.com/about" title="CoderRobin" target="_blank" itemprop="author">CoderRobin</a>
+		
+  <p class="article-time">
+    <time datetime="2015-02-04T14:18:43.000Z" itemprop="datePublished"> 发表于 Feb 4 2015</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#使用方式"><span class="toc-number">1.</span> <span class="toc-text">使用方式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#xml中配置："><span class="toc-number">1.1.</span> <span class="toc-text">xml中配置：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#绑定ViewPager"><span class="toc-number">1.2.</span> <span class="toc-text">绑定ViewPager</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#让自定义的viewpager的adapter实现方法"><span class="toc-number">1.3.</span> <span class="toc-text">让自定义的viewpager的adapter实现方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义属性"><span class="toc-number">1.4.</span> <span class="toc-text">自定义属性</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#源码分析"><span class="toc-number">2.</span> <span class="toc-text">源码分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结："><span class="toc-number">3.</span> <span class="toc-text">总结：</span></a></li></ol>
+		
+		</div>
+		
+		<p>最近在项目中用到了PagerSlidingTabStrip（<a href="https://github.com/astuetz/PagerSlidingTabStrip" target="_blank" rel="external">github地址</a>），于是就看了下其实现，发现实现不是特别复杂，算是一个学习自定义控件的不错的例子，于是便拿出来跟大家分享下。<br>PagerSlidingTabStrip控件效果如下，支持viewpager滑动时，选项卡联动<br><img src="/image/pagerslidingtab.png" alt="pagerslidingtab" title="pagerslidingtab"></p>
+<h1 id="使用方式">使用方式</h1><p>下面我们先来看看其使用方式</p>
+<h2 id="xml中配置：">xml中配置：</h2><figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;com.astuetz.PagerSlidingTabStrip</span><br><span class="line">       android:<span class="variable">id=</span><span class="string">"@+id/tabs"</span></span><br><span class="line">       android:<span class="variable">layout_width=</span><span class="string">"match_parent"</span></span><br><span class="line">       android:<span class="variable">layout_height=</span>“wrap_content<span class="string">"</span><br><span class="line">      /&gt;</span></span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="绑定ViewPager">绑定ViewPager</h2><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line">	<span class="keyword">protected</span> <span class="function"><span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">		setContentView(R.layout.activity_main);</span><br><span class="line"></span><br><span class="line">		tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);</span><br><span class="line">		pager = (ViewPager) findViewById(R.id.pager);</span><br><span class="line">		adapter = <span class="keyword">new</span> MyPagerAdapter(getFragmentManager());</span><br><span class="line"></span><br><span class="line">		pager.setAdapter(adapter);</span><br><span class="line">		tabs.setViewPager(pager);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="让自定义的viewpager的adapter实现方法">让自定义的viewpager的adapter实现方法</h2><p>若需要导航栏为图标，则实现PagerSlidingTabStrip提供的IconTabProvider接口的getPageIconResId方法</p>
+<p>若需要导航栏内容为文字，则直接实现adapter的getPageTitle方法</p>
+<p>若需要实现其他方式，比如图片下面加文字等，则需要修改addTab的方法，看完以下源码分析就可以知道了如何修改了</p>
+<h2 id="自定义属性">自定义属性</h2><p>PagerSlidingTabStrip提供了如下自定义属性<br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">pstsIndicatorColor  滑动指示器颜色</span><br><span class="line">pstsUnderlineColor 视图的底部的全宽线的颜色</span><br><span class="line">pstsDividerColor       选项卡之间的分隔线的颜色</span><br><span class="line">pstsIndicatorHeight  滑动指标高度</span><br><span class="line">pstsUnderlineHeight  视图的底部高度的全宽线</span><br><span class="line">pstsDividerPadding  顶部和分频器的底部填充</span><br><span class="line">pstsTabPaddingLeftRight 每个选项卡的padding</span><br><span class="line">pstsTabBackground <span class="constant">tab</span>背景，可以为StateListDrawable</span><br><span class="line">pstsShouldExpand    如果设置为<span class="constant">true</span>，每个选项卡被赋予了相同的weight，长度一致，默认为<span class="constant">false</span></span><br><span class="line">pstsTextAllCaps   如果为<span class="constant">true</span>，所有的选项卡标题将是大写，默认为<span class="constant">true</span></span><br></pre></td></tr></table></figure></p>
+<h1 id="源码分析">源码分析</h1><p>知道如何使用后我们来分析源码。了解具体的实现过程和在使用过程中应注意的事项。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//继承HorizontalScrollView，导航栏超出界面时可左右滑动</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PagerSlidingTabStrip</span> <span class="keyword">extends</span> <span class="title">HorizontalScrollView</span> </span><br><span class="line">	//<span class="title">viewpager</span> <span class="title">adpter</span>可选择实现的接口</span><br><span class="line">	<span class="title">public</span> <span class="title">interface</span> <span class="title">IconTabProvider</span> </span>&#123;</span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getPageIconResId</span><span class="params">(<span class="keyword">int</span> position)</span></span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">PagerSlidingTabStrip</span><span class="params">(Context context, AttributeSet attrs,</span><br><span class="line"> <span class="keyword">int</span> defStyle)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>(context, attrs, defStyle);</span><br><span class="line">		setFillViewport(<span class="keyword">true</span>);</span><br><span class="line">		setWillNotDraw(<span class="keyword">false</span>);</span><br><span class="line">		<span class="comment">//动态生成导航栏的LinearLayout，并将其addview到父控件中</span></span><br><span class="line">		tabsContainer = <span class="keyword">new</span> LinearLayout(context);</span><br><span class="line">		tabsContainer.setOrientation(LinearLayout.HORIZONTAL);</span><br><span class="line">		tabsContainer.setLayoutParams(<span class="keyword">new</span> LayoutParams(</span><br><span class="line">		LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));</span><br><span class="line">		addView(tabsContainer);</span><br><span class="line"></span><br><span class="line"><span class="comment">//该处省略获取自定义属性的代码</span></span><br><span class="line">		</span><br><span class="line">		rectPaint = <span class="keyword">new</span> Paint();</span><br><span class="line">		rectPaint.setAntiAlias(<span class="keyword">true</span>);</span><br><span class="line">		rectPaint.setStyle(Style.FILL);</span><br><span class="line"></span><br><span class="line">		dividerPaint = <span class="keyword">new</span> Paint();</span><br><span class="line">		dividerPaint.setAntiAlias(<span class="keyword">true</span>);</span><br><span class="line">		dividerPaint.setStrokeWidth(dividerWidth);</span><br><span class="line"></span><br><span class="line">		defaultTabLayoutParams = <span class="keyword">new</span> LinearLayout.LayoutParams</span><br><span class="line">(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);</span><br><span class="line">		expandedTabLayoutParams = <span class="keyword">new</span> LinearLayout.LayoutParams(<span class="number">0</span>, </span><br><span class="line">LayoutParams.MATCH_PARENT, <span class="number">1.0f</span>);</span><br><span class="line"><span class="keyword">if</span> (locale == <span class="keyword">null</span>) &#123;</span><br><span class="line">			locale = getResources().getConfiguration().locale;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//设置viewpager接口</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setViewPager</span><span class="params">(ViewPager pager)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.pager = pager;</span><br><span class="line"></span><br><span class="line">		<span class="comment">//设置viewpager时需先设置adapter否则会报错，</span></span><br><span class="line">		<span class="comment">//因为无法获得导航栏的需要的内容</span></span><br><span class="line">		<span class="keyword">if</span> (pager.getAdapter() == <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException</span><br><span class="line">(<span class="string">"ViewPager does not have adapter instance."</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//设置了viewpager的OnPageChangeListener,因此用户不可以给viewpager</span></span><br><span class="line">		<span class="comment">//设置该监听，而应该给pagerSlidingtabStrip设置监听（用了静态代理），</span></span><br><span class="line">		<span class="comment">//否则会导致该控件无法正常使用，</span></span><br><span class="line">		pager.setOnPageChangeListener(pageListener);</span><br><span class="line"></span><br><span class="line">		notifyDataSetChanged();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOnPageChangeListener</span><span class="params">(OnPageChangeListener listener)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.delegatePageListener = listener;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">notifyDataSetChanged</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="comment">//移除全部子视图，根据adapter内容addTab</span></span><br><span class="line">		tabsContainer.removeAllViews();</span><br><span class="line"></span><br><span class="line">		tabCount = pager.getAdapter().getCount();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; tabCount; i++) &#123;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (pager.getAdapter() <span class="keyword">instanceof</span> IconTabProvider) &#123;</span><br><span class="line">				addIconTab(i, ((IconTabProvider) pager.getAdapter()).</span><br><span class="line">				getPageIconResId(i));</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				addTextTab(i, pager.getAdapter().getPageTitle(i).toString());</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		updateTabStyles();</span><br><span class="line"></span><br><span class="line">		getViewTreeObserver().addOnGlobalLayoutListener(</span><br><span class="line">		<span class="keyword">new</span> OnGlobalLayoutListener() &#123;</span><br><span class="line"></span><br><span class="line">			<span class="annotation">@SuppressWarnings</span>(<span class="string">"deprecation"</span>)</span><br><span class="line">			<span class="annotation">@SuppressLint</span>(<span class="string">"NewApi"</span>)</span><br><span class="line">			<span class="annotation">@Override</span></span><br><span class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onGlobalLayout</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (Build.VERSION.SDK_INT &lt; Build.VERSION_CODES.JELLY_BEAN) &#123;</span><br><span class="line">				getViewTreeObserver().removeGlobalOnLayoutListener(<span class="keyword">this</span>);</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				getViewTreeObserver().removeOnGlobalLayoutListener(<span class="keyword">this</span>);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">				currentPosition = pager.getCurrentItem();</span><br><span class="line">				scrollToChild(currentPosition, <span class="number">0</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="comment">//添加文字导航栏内容</span></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addTextTab</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> position, String title)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		TextView tab = <span class="keyword">new</span> TextView(getContext());</span><br><span class="line">		tab.setText(title);</span><br><span class="line">		tab.setGravity(Gravity.CENTER);</span><br><span class="line">		tab.setSingleLine();</span><br><span class="line"></span><br><span class="line">		addTab(position, tab);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//添加图片导航栏内容</span></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addIconTab</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> position, <span class="keyword">int</span> resId)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		ImageButton tab = <span class="keyword">new</span> ImageButton(getContext());</span><br><span class="line">		tab.setImageResource(resId);</span><br><span class="line"></span><br><span class="line">		addTab(position, tab);</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addTab</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> position, View tab)</span> </span>&#123;</span><br><span class="line">		tab.setFocusable(<span class="keyword">true</span>);</span><br><span class="line">		tab.setOnClickListener(<span class="keyword">new</span> OnClickListener() &#123;</span><br><span class="line">			<span class="annotation">@Override</span></span><br><span class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">				pager.setCurrentItem(position);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">		<span class="comment">//设置每个tab左右的padding</span></span><br><span class="line">		tab.setPadding(tabPadding, <span class="number">0</span>, tabPadding, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">		<span class="comment">//往container里面动态添加tab,根据shouldExpand layoutparm分别为</span></span><br><span class="line">		<span class="comment">//expandedTabLayoutParam(每个tab weight相同即宽度一致)</span></span><br><span class="line">		tabsContainer.addView(tab, position, shouldExpand ?</span><br><span class="line">		 expandedTabLayoutParams : defaultTabLayoutParams);</span><br><span class="line">	</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//设置每个tab的风格，包含背景、文字大小、颜色、字体、是否大写等</span></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">updateTabStyles</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; tabCount; i++) &#123;</span><br><span class="line"></span><br><span class="line">			View v = tabsContainer.getChildAt(i);</span><br><span class="line"></span><br><span class="line">			v.setBackgroundResource(tabBackgroundResId);</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (v <span class="keyword">instanceof</span> TextView) &#123;</span><br><span class="line"></span><br><span class="line">				TextView tab = (TextView) v;</span><br><span class="line">				tab.setTextSize(TypedValue.COMPLEX_UNIT_PX, tabTextSize);</span><br><span class="line">				tab.setTypeface(tabTypeface, tabTypefaceStyle);</span><br><span class="line">				tab.setTextColor(tabTextColor);</span><br><span class="line"></span><br><span class="line">				<span class="keyword">if</span> (textAllCaps) &#123;</span><br><span class="line">					<span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;=</span><br><span class="line"> 					Build.VERSION_CODES.ICE_CREAM_SANDWICH) &#123;</span><br><span class="line">						tab.setAllCaps(<span class="keyword">true</span>);</span><br><span class="line">					&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">						tab.setText(tab.getText().toString().</span><br><span class="line">						toUpperCase(locale));</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//滚动到特定位置,调用父类scrollTo，布局超出边界才会起作用</span></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">scrollToChild</span><span class="params">(<span class="keyword">int</span> position, <span class="keyword">int</span> offset)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (tabCount == <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">int</span> newScrollX = tabsContainer.getChildAt(position)</span><br><span class="line">		.getLeft() + offset;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (position &gt; <span class="number">0</span> || offset &gt; <span class="number">0</span>) &#123;</span><br><span class="line">			newScrollX -= scrollOffset;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (newScrollX != lastScrollX) &#123;</span><br><span class="line">			lastScrollX = newScrollX;</span><br><span class="line">			scrollTo(newScrollX, <span class="number">0</span>);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//onDraw方法，重头戏</span></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDraw</span><span class="params">(Canvas canvas)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>.onDraw(canvas);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (isInEditMode() || tabCount == <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//获取pagerslidingTab的底部坐标,后续都是在底部-高度获得top坐标</span></span><br><span class="line">		<span class="keyword">final</span> <span class="keyword">int</span> height = getHeight();</span><br><span class="line"></span><br><span class="line">		<span class="comment">//根据当前tab坐标和下一个tab坐标和currentPositionOffset</span></span><br><span class="line">		<span class="comment">//计算底部指示器坐标并绘制，实际是一个特定颜色的矩形</span></span><br><span class="line"></span><br><span class="line">		rectPaint.setColor(indicatorColor);</span><br><span class="line">		View currentTab = tabsContainer.getChildAt(currentPosition);</span><br><span class="line">		<span class="keyword">float</span> lineLeft = currentTab.getLeft();</span><br><span class="line">		<span class="keyword">float</span> lineRight = currentTab.getRight();</span><br><span class="line">		<span class="keyword">if</span> (currentPositionOffset &gt; <span class="number">0f</span> &amp;&amp; currentPosition &lt; tabCount - <span class="number">1</span>) &#123;</span><br><span class="line"></span><br><span class="line">			View nextTab = tabsContainer.getChildAt(currentPosition + <span class="number">1</span>);</span><br><span class="line">			<span class="keyword">final</span> <span class="keyword">float</span> nextTabLeft = nextTab.getLeft();</span><br><span class="line">			<span class="keyword">final</span> <span class="keyword">float</span> nextTabRight = nextTab.getRight();</span><br><span class="line"></span><br><span class="line">			lineLeft = (currentPositionOffset * nextTabLeft +</span><br><span class="line"></span><br><span class="line"> (<span class="number">1f</span> - currentPositionOffset) * lineLeft);</span><br><span class="line">			lineRight = (currentPositionOffset * nextTabRight +</span><br><span class="line"></span><br><span class="line"> (<span class="number">1f</span> - currentPositionOffset) * lineRight);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		canvas.drawRect(lineLeft, height - indicatorHeight,</span><br><span class="line">		 lineRight, height, rectPaint);</span><br><span class="line"></span><br><span class="line">		</span><br><span class="line">		<span class="comment">//根据高度绘制底部矩形长条</span></span><br><span class="line">		rectPaint.setColor(underlineColor);</span><br><span class="line">		canvas.drawRect(<span class="number">0</span>, height - underlineHeight,</span><br><span class="line">	        tabsContainer.getWidth(), height, rectPaint);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">		<span class="comment">//绘制各个tab之间纵向的dividerPadding长度的分隔线</span></span><br><span class="line"></span><br><span class="line">		dividerPaint.setColor(dividerColor);</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; tabCount - <span class="number">1</span>; i++) &#123;</span><br><span class="line">			View tab = tabsContainer.getChildAt(i);</span><br><span class="line">			canvas.drawLine(tab.getRight(), dividerPadding, tab.getRight(), </span><br><span class="line">			height -dividerPadding, dividerPaint);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//内部PageListener类，用于监听滑动事件得到当前滑动偏移量和当前tab</span></span><br><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">PageListener</span> <span class="keyword">implements</span> <span class="title">OnPageChangeListener</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="annotation">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPageScrolled</span><span class="params">(<span class="keyword">int</span> position, </span><br><span class="line">		<span class="keyword">float</span> positionOffset, <span class="keyword">int</span> positionOffsetPixels)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">			currentPosition = position;</span><br><span class="line">			currentPositionOffset = positionOffset;</span><br><span class="line"></span><br><span class="line">			scrollToChild(position, (<span class="keyword">int</span>) (positionOffset * </span><br><span class="line">			tabsContainer.getChildAt(position).getWidth()));</span><br><span class="line"></span><br><span class="line">			invalidate();</span><br><span class="line">			<span class="comment">//给pagerslidingtab加滑动监听即委托执行delegatePageListener的方法</span></span><br><span class="line">			<span class="keyword">if</span> (delegatePageListener != <span class="keyword">null</span>) &#123;</span><br><span class="line">				delegatePageListener.onPageScrolled(position, </span><br><span class="line">					positionOffset, positionOffsetPixels);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="annotation">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPageScrollStateChanged</span><span class="params">(<span class="keyword">int</span> state)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">if</span> (state == ViewPager.SCROLL_STATE_IDLE) &#123;</span><br><span class="line">				scrollToChild(pager.getCurrentItem(), <span class="number">0</span>);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (delegatePageListener != <span class="keyword">null</span>) &#123;</span><br><span class="line">				delegatePageListener.onPageScrollStateChanged(state);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="annotation">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPageSelected</span><span class="params">(<span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">if</span> (delegatePageListener != <span class="keyword">null</span>) &#123;</span><br><span class="line">				delegatePageListener.onPageSelected(position);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">/×</span><br><span class="line">省略获取和设置属性的一系列方法</span><br><span class="line">×/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//activity销毁时在onSaveInstanceState记录当前页数，</span></span><br><span class="line"><span class="comment">//当onRestoreInstanceState获得当前页数并重新</span></span><br><span class="line"><span class="comment">//requestLayout进行测量、布局和绘制</span></span><br><span class="line"><span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onRestoreInstanceState</span><span class="params">(Parcelable state)</span> </span>&#123;</span><br><span class="line">		SavedState savedState = (SavedState) state;</span><br><span class="line">		<span class="keyword">super</span>.onRestoreInstanceState(savedState.getSuperState());</span><br><span class="line">		currentPosition = savedState.currentPosition;</span><br><span class="line">		requestLayout();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Parcelable <span class="title">onSaveInstanceState</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		Parcelable superState = <span class="keyword">super</span>.onSaveInstanceState();</span><br><span class="line">		SavedState savedState = <span class="keyword">new</span> SavedState(superState);</span><br><span class="line">		savedState.currentPosition = currentPosition;</span><br><span class="line">		<span class="keyword">return</span> savedState;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SavedState</span> <span class="keyword">extends</span> <span class="title">BaseSavedState</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> currentPosition;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">SavedState</span><span class="params">(Parcelable superState)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">super</span>(superState);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="function"><span class="keyword">private</span> <span class="title">SavedState</span><span class="params">(Parcel in)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">super</span>(in);</span><br><span class="line">			currentPosition = in.readInt();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="annotation">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeToParcel</span><span class="params">(Parcel dest, <span class="keyword">int</span> flags)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">super</span>.writeToParcel(dest, flags);</span><br><span class="line">			dest.writeInt(currentPosition);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Parcelable.Creator&lt;SavedState&gt; CREATOR </span><br><span class="line">		= <span class="keyword">new</span> Parcelable.Creator&lt;SavedState&gt;() &#123;</span><br><span class="line">			<span class="annotation">@Override</span></span><br><span class="line">			<span class="function"><span class="keyword">public</span> SavedState <span class="title">createFromParcel</span><span class="params">(Parcel in)</span> </span>&#123;</span><br><span class="line">				<span class="keyword">return</span> <span class="keyword">new</span> SavedState(in);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="annotation">@Override</span></span><br><span class="line">			<span class="keyword">public</span> SavedState[] newArray(<span class="keyword">int</span> size) &#123;</span><br><span class="line">				<span class="keyword">return</span> <span class="keyword">new</span> SavedState[size];</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="总结：">总结：</h1><p>以上就是对pagerSlidingTabStrip源码的分析，整个源码较简单<br>1.在container（linerlayout）中添加了tab(textview或者imageButton)<br>2.在onDraw方法里面根据当前页和偏移量计算和绘制矩形指示器、矩形底部长栏、纵向的tab之间的分割线，<br>3.对viewpager的onPageListener中获取当前偏移量并滑动到该子tab</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/PagerSlidingTabStrip/">PagerSlidingTabStrip</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://coderrobin.com/2015/02/04/开源项目源码分析-PagerSlidingTabStrip/" data-title="开源项目源码分析-PagerSlidingTabStrip | An Android Coder" data-tsina="undefined" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/02/05/Android-LoaderManager源码分析/" title="Android Loader解析">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Android Loader解析</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/02/01/CustomViews开源组件/"  title="CustomViews开源项目">
+ <strong>下一篇：</strong><br/> 
+ <span>CustomViews开源项目
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/02/04/开源项目源码分析-PagerSlidingTabStrip/" data-title="开源项目源码分析-PagerSlidingTabStrip" data-url="http://coderrobin.com/2015/02/04/开源项目源码分析-PagerSlidingTabStrip/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#使用方式"><span class="toc-number">1.</span> <span class="toc-text">使用方式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#xml中配置："><span class="toc-number">1.1.</span> <span class="toc-text">xml中配置：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#绑定ViewPager"><span class="toc-number">1.2.</span> <span class="toc-text">绑定ViewPager</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#让自定义的viewpager的adapter实现方法"><span class="toc-number">1.3.</span> <span class="toc-text">让自定义的viewpager的adapter实现方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义属性"><span class="toc-number">1.4.</span> <span class="toc-text">自定义属性</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#源码分析"><span class="toc-number">2.</span> <span class="toc-text">源码分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结："><span class="toc-number">3.</span> <span class="toc-text">总结：</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Android/" title="Android">Android<sup>15</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/读书笔记/" title="读书笔记">读书笔记<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/动画/" title="动画">动画<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/自定义控件/" title="自定义控件">自定义控件<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Annotation/" title="Annotation">Annotation<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ReentrantLock/" title="ReentrantLock">ReentrantLock<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/fragment/" title="fragment">fragment<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/viewpager/" title="viewpager">viewpager<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/uil/" title="uil">uil<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CustomViews/" title="CustomViews">CustomViews<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/自定义控件布局/" title="自定义控件布局">自定义控件布局<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PagerSlidingTabStrip/" title="PagerSlidingTabStrip">PagerSlidingTabStrip<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EventBus/" title="EventBus">EventBus<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/volley/" title="volley">volley<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/反射/" title="反射">反射<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/RecyclerView/" title="RecyclerView">RecyclerView<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LoaderManager/" title="LoaderManager">LoaderManager<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.codekk.com/" target="_blank" title="codekk开源项目解析">codekk开源项目解析</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.trinea.cn/" target="_blank" title="Trinea">Trinea</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.daimajia.com/" target="_blank" title="代码家">代码家</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://stormzhang.com/" target="_blank" title="stormzhang">stormzhang</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/xiaanming/" target="_blank" title="夏安明">夏安明</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/bboyfeiyu" target="_blank" title="Mr.Simple">Mr.Simple</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/aigestudio/" target="_blank" title="AigeSudio">AigeSudio</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.rainstops.com/" target="_blank" title="rainstops">rainstops</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/sunzn/" target="_blank" title="sunzn&#39;Blog">sunzn&#39;Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/guolin_blog" target="_blank" title="郭霖">郭霖</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/lmj623565791" target="_blank" title="鸿洋">鸿洋</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m CoderRobin. <br/>
+			Welcome here to enjoy android.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/206001274" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/CoderRobin" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:rzb7873@hotmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="http://coderrobin.com/about" target="_blank" title="CoderRobin">CoderRobin</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"rzb7873"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -1,0 +1,576 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>ViewPager禁止遥控切页 | An Android Coder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="CoderRobin">
+    
+
+    
+    <meta name="description" content="在做app对遥控（实体按键）的支持时，发现在viewpager子布局中按遥控左右键会翻页。查看viewpager源码，可以看到如下代码段">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ViewPager禁止遥控切页">
+<meta property="og:url" content="http://coderrobin.com/2015/01/17/ViewPager禁止遥控切页/index.html">
+<meta property="og:site_name" content="An Android Coder">
+<meta property="og:description" content="在做app对遥控（实体按键）的支持时，发现在viewpager子布局中按遥控左右键会翻页。查看viewpager源码，可以看到如下代码段">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ViewPager禁止遥控切页">
+<meta name="twitter:description" content="在做app对遥控（实体按键）的支持时，发现在viewpager子布局中按遥控左右键会翻页。查看viewpager源码，可以看到如下代码段">
+
+    
+    <link rel="alternative" href="/atom.xml" title="An Android Coder" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="An Android Coder">An Android Coder</a></h1>
+				<h2 class="blog-motto">CoderRobin&#39;s Blog</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:coderrobin.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/01/17/ViewPager禁止遥控切页/" title="ViewPager禁止遥控切页" itemprop="url">ViewPager禁止遥控切页</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://coderrobin.com/about" title="CoderRobin" target="_blank" itemprop="author">CoderRobin</a>
+		
+  <p class="article-time">
+    <time datetime="2015-01-17T15:50:01.000Z" itemprop="datePublished"> 发表于 Jan 17 2015</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p>在做app对遥控（实体按键）的支持时，发现在viewpager子布局中按遥控左右键会翻页。<br>查看viewpager源码，可以看到如下代码段<br><a id="more"></a><br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">boolean</span> dispatchKeyEvent(KeyEvent event) &#123;</span><br><span class="line">       <span class="comment">// Let the focused view and/or our descendants get the key first</span></span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">super</span>.dispatchKeyEvent(event) || executeKeyEvent(event);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span><br><span class="line">    * You can call this function yourself to have the scroll view perform</span><br><span class="line">    * scrolling from a key event, just as if the event had been dispatched to</span><br><span class="line">    * it by the view hierarchy.</span><br><span class="line">    *</span><br><span class="line">    * @param event The key event to execute.</span><br><span class="line">    * @return Return true if the event was handled, else false.</span><br><span class="line">    */</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">boolean</span> executeKeyEvent(KeyEvent event) &#123;</span><br><span class="line">       <span class="keyword">boolean</span> handled = <span class="keyword">false</span>;</span><br><span class="line">       <span class="keyword">if</span> (event.getAction() == KeyEvent.ACTION_DOWN) &#123;</span><br><span class="line">           <span class="keyword">switch</span> (event.getKeyCode()) &#123;</span><br><span class="line">               <span class="keyword">case</span> KeyEvent.KEYCODE_DPAD_LEFT:</span><br><span class="line">                   handled = arrowScroll(FOCUS_LEFT);</span><br><span class="line">                   <span class="keyword">break</span>;</span><br><span class="line">               <span class="keyword">case</span> KeyEvent.KEYCODE_DPAD_RIGHT:</span><br><span class="line">                   handled = arrowScroll(FOCUS_RIGHT);</span><br><span class="line">                   <span class="keyword">break</span>;</span><br><span class="line">               <span class="keyword">case</span> KeyEvent.KEYCODE_TAB:</span><br><span class="line">                   <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= <span class="number">11</span>) &#123;</span><br><span class="line">                       <span class="comment">// The focus finder had a bug handling FOCUS_FORWARD and FOCUS_BACKWARD</span></span><br><span class="line">                       <span class="comment">// before Android 3.0. Ignore the tab key on those devices.</span></span><br><span class="line">                       <span class="keyword">if</span> (KeyEventCompat.hasNoModifiers(event)) &#123;</span><br><span class="line">                           handled = arrowScroll(FOCUS_FORWARD);</span><br><span class="line">                       &#125; <span class="keyword">else</span> <span class="keyword">if</span> (KeyEventCompat.hasModifiers(event, KeyEvent.META_SHIFT_ON)) &#123;</span><br><span class="line">                           handled = arrowScroll(FOCUS_BACKWARD);</span><br><span class="line">                       &#125;</span><br><span class="line">                   &#125;</span><br><span class="line">                   <span class="keyword">break</span>;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> handled;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">boolean</span> arrowScroll(<span class="keyword">int</span> direction) &#123;</span><br><span class="line">       View currentFocused = findFocus();</span><br><span class="line">       <span class="keyword">if</span> (currentFocused == <span class="keyword">this</span>) &#123;</span><br><span class="line">           currentFocused = <span class="keyword">null</span>;</span><br><span class="line">       &#125; <span class="keyword">else</span> <span class="keyword">if</span> (currentFocused != <span class="keyword">null</span>) &#123;</span><br><span class="line">           <span class="keyword">boolean</span> isChild = <span class="keyword">false</span>;</span><br><span class="line">           <span class="keyword">for</span> (ViewParent parent = currentFocused.getParent(); parent <span class="keyword">instanceof</span> ViewGroup;</span><br><span class="line">                   parent = parent.getParent()) &#123;</span><br><span class="line">               <span class="keyword">if</span> (parent == <span class="keyword">this</span>) &#123;</span><br><span class="line">                   isChild = <span class="keyword">true</span>;</span><br><span class="line">                   <span class="keyword">break</span>;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">if</span> (!isChild) &#123;</span><br><span class="line">               <span class="comment">// This would cause the focus search down below to fail in fun ways.</span></span><br><span class="line">               <span class="keyword">final</span> StringBuilder sb = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">               sb.<span class="keyword">append</span>(currentFocused.getClass().getSimpleName());</span><br><span class="line">               <span class="keyword">for</span> (ViewParent parent = currentFocused.getParent(); parent <span class="keyword">instanceof</span> ViewGroup;</span><br><span class="line">                       parent = parent.getParent()) &#123;</span><br><span class="line">                   sb.<span class="keyword">append</span>(<span class="string">" =&gt; "</span>).<span class="keyword">append</span>(parent.getClass().getSimpleName());</span><br><span class="line">               &#125;</span><br><span class="line">               Log.e(TAG, <span class="string">"arrowScroll tried to find focus based on non-child "</span> +</span><br><span class="line">                       <span class="string">"current focused view "</span> + sb.toString());</span><br><span class="line">               currentFocused = <span class="keyword">null</span>;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">boolean</span> handled = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">       View nextFocused = FocusFinder.getInstance().findNextFocus(<span class="keyword">this</span>, currentFocused,</span><br><span class="line">               direction);</span><br><span class="line">       <span class="keyword">if</span> (nextFocused != <span class="keyword">null</span> &amp;&amp; nextFocused != currentFocused) &#123;</span><br><span class="line">           <span class="keyword">if</span> (direction == View.FOCUS_LEFT) &#123;</span><br><span class="line">               <span class="comment">// If there is nothing to the left, or this is causing us to</span></span><br><span class="line">               <span class="comment">// jump to the right, then what we really want to do is page left.</span></span><br><span class="line">               <span class="keyword">final</span> <span class="keyword">int</span> nextLeft = getChildRectInPagerCoordinates(mTempRect, nextFocused).left;</span><br><span class="line">               <span class="keyword">final</span> <span class="keyword">int</span> currLeft = getChildRectInPagerCoordinates(mTempRect, currentFocused).left;</span><br><span class="line">               <span class="keyword">if</span> (currentFocused != <span class="keyword">null</span> &amp;&amp; nextLeft &gt;= currLeft) &#123;</span><br><span class="line">                   handled = pageLeft();</span><br><span class="line">               &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                   handled = nextFocused.requestFocus();</span><br><span class="line">               &#125;</span><br><span class="line">           &#125; <span class="keyword">else</span> <span class="keyword">if</span> (direction == View.FOCUS_RIGHT) &#123;</span><br><span class="line">               <span class="comment">// If there is nothing to the right, or this is causing us to</span></span><br><span class="line">               <span class="comment">// jump to the left, then what we really want to do is page right.</span></span><br><span class="line">               <span class="keyword">final</span> <span class="keyword">int</span> nextLeft = getChildRectInPagerCoordinates(mTempRect, nextFocused).left;</span><br><span class="line">               <span class="keyword">final</span> <span class="keyword">int</span> currLeft = getChildRectInPagerCoordinates(mTempRect, currentFocused).left;</span><br><span class="line">               <span class="keyword">if</span> (currentFocused != <span class="keyword">null</span> &amp;&amp; nextLeft &lt;= currLeft) &#123;</span><br><span class="line">                   handled = pageRight();</span><br><span class="line">               &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                   handled = nextFocused.requestFocus();</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125; <span class="keyword">else</span> <span class="keyword">if</span> (direction == FOCUS_LEFT || direction == FOCUS_BACKWARD) &#123;</span><br><span class="line">           <span class="comment">// Trying to move left and nothing there; try to page.</span></span><br><span class="line">           handled = pageLeft();</span><br><span class="line">       &#125; <span class="keyword">else</span> <span class="keyword">if</span> (direction == FOCUS_RIGHT || direction == FOCUS_FORWARD) &#123;</span><br><span class="line">           <span class="comment">// Trying to move right and nothing there; try to page.</span></span><br><span class="line">           handled = pageRight();</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">if</span> (handled) &#123;</span><br><span class="line">           playSoundEffect(SoundEffectConstants.getContantForFocusDirection(direction));</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> handled;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p> 分析以上代码调用可知dispatchKeyEvent方法拦截了左右和tab按键，得到nextFocused后requestFocus，导致切页</p>
+<p> 禁止遥控切页的方法：继承viewpager后重写executeKeyEvent或arrowScroll方法，返回false即可 </p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/viewpager/">viewpager</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://coderrobin.com/2015/01/17/ViewPager禁止遥控切页/" data-title="ViewPager禁止遥控切页 | An Android Coder" data-tsina="undefined" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/01/19/fragment多语言问题/" title="fragment多语言问题">
+  <strong>上一篇：</strong><br/>
+  <span>
+  fragment多语言问题</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/01/17/读书笔记-现代操作系统-linux/"  title="读书笔记-现代操作系统:linux">
+ <strong>下一篇：</strong><br/> 
+ <span>读书笔记-现代操作系统:linux
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/01/17/ViewPager禁止遥控切页/" data-title="ViewPager禁止遥控切页" data-url="http://coderrobin.com/2015/01/17/ViewPager禁止遥控切页/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Android/" title="Android">Android<sup>15</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/读书笔记/" title="读书笔记">读书笔记<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/动画/" title="动画">动画<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/自定义控件/" title="自定义控件">自定义控件<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Annotation/" title="Annotation">Annotation<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ReentrantLock/" title="ReentrantLock">ReentrantLock<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/fragment/" title="fragment">fragment<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/viewpager/" title="viewpager">viewpager<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/uil/" title="uil">uil<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CustomViews/" title="CustomViews">CustomViews<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/自定义控件布局/" title="自定义控件布局">自定义控件布局<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PagerSlidingTabStrip/" title="PagerSlidingTabStrip">PagerSlidingTabStrip<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EventBus/" title="EventBus">EventBus<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/volley/" title="volley">volley<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/反射/" title="反射">反射<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/RecyclerView/" title="RecyclerView">RecyclerView<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LoaderManager/" title="LoaderManager">LoaderManager<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.codekk.com/" target="_blank" title="codekk开源项目解析">codekk开源项目解析</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.trinea.cn/" target="_blank" title="Trinea">Trinea</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.daimajia.com/" target="_blank" title="代码家">代码家</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://stormzhang.com/" target="_blank" title="stormzhang">stormzhang</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/xiaanming/" target="_blank" title="夏安明">夏安明</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/bboyfeiyu" target="_blank" title="Mr.Simple">Mr.Simple</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/aigestudio/" target="_blank" title="AigeSudio">AigeSudio</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.rainstops.com/" target="_blank" title="rainstops">rainstops</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/sunzn/" target="_blank" title="sunzn&#39;Blog">sunzn&#39;Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/guolin_blog" target="_blank" title="郭霖">郭霖</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/lmj623565791" target="_blank" title="鸿洋">鸿洋</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m CoderRobin. <br/>
+			Welcome here to enjoy android.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/206001274" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/CoderRobin" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:rzb7873@hotmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="http://coderrobin.com/about" target="_blank" title="CoderRobin">CoderRobin</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"rzb7873"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

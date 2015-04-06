@@ -1,0 +1,579 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Android RecyclerView使用及自定义itemAnimator | An Android Coder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="CoderRobin">
+    
+
+    
+    <meta name="description" content="简介14年google io上google就开放了RecyclerView，导入support-v7包即可使用。RecyclerView可以认为是AbsListview的升级版，但自带了对viewholder的使用，与listview缓存convertview不同的是,Recyclerview缓存的是viewholder.对每个item的动画也有较好的支持。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android RecyclerView使用及自定义itemAnimator">
+<meta property="og:url" content="http://coderrobin.com/2015/02/11/Android-RecyclerView使用/index.html">
+<meta property="og:site_name" content="An Android Coder">
+<meta property="og:description" content="简介14年google io上google就开放了RecyclerView，导入support-v7包即可使用。RecyclerView可以认为是AbsListview的升级版，但自带了对viewholder的使用，与listview缓存convertview不同的是,Recyclerview缓存的是viewholder.对每个item的动画也有较好的支持。">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android RecyclerView使用及自定义itemAnimator">
+<meta name="twitter:description" content="简介14年google io上google就开放了RecyclerView，导入support-v7包即可使用。RecyclerView可以认为是AbsListview的升级版，但自带了对viewholder的使用，与listview缓存convertview不同的是,Recyclerview缓存的是viewholder.对每个item的动画也有较好的支持。">
+
+    
+    <link rel="alternative" href="/atom.xml" title="An Android Coder" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="An Android Coder">An Android Coder</a></h1>
+				<h2 class="blog-motto">CoderRobin&#39;s Blog</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:coderrobin.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/02/11/Android-RecyclerView使用/" title="Android RecyclerView使用及自定义itemAnimator" itemprop="url">Android RecyclerView使用及自定义itemAnimator</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://coderrobin.com/about" title="CoderRobin" target="_blank" itemprop="author">CoderRobin</a>
+		
+  <p class="article-time">
+    <time datetime="2015-02-11T15:14:29.000Z" itemprop="datePublished"> 发表于 Feb 11 2015</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#基本使用"><span class="toc-number">2.</span> <span class="toc-text">基本使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#在activity中使用"><span class="toc-number">2.1.</span> <span class="toc-text">在activity中使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义adapter"><span class="toc-number">2.2.</span> <span class="toc-text">自定义adapter</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#自定义itemAnimator"><span class="toc-number">3.</span> <span class="toc-text">自定义itemAnimator</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<h1 id="简介">简介</h1><p>14年google io上google就开放了RecyclerView，导入support-v7包即可使用。<br>RecyclerView可以认为是AbsListview的升级版，但自带了对viewholder的使用，<br>与listview缓存convertview不同的是,Recyclerview缓存的是viewholder.<br>对每个item的动画也有较好的支持。<br><a id="more"></a></p>
+<h1 id="基本使用">基本使用</h1><p>RecyclerView提供了以下5种角色<br>RecyclerView.Adapter<br>RecyclerView.ViewHolder<br>RecyclerView.LayoutManager     布局器，负责Item视图的布局<br>RecyclerView.ItemDecoration     每个item附加的子视图，可用来绘制Divider,设置padding等<br>RecyclerView.ItemAnimator     负责添加、删除数据时的动画效果</p>
+<h2 id="在activity中使用">在activity中使用</h2><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">    <span class="annotation">@Override</span> </span><br><span class="line">   <span class="keyword">protected</span> <span class="function"><span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123; </span><br><span class="line">       <span class="comment">// TODO Auto-generated method stub  </span></span><br><span class="line">       <span class="keyword">super</span>.onCreate(savedInstanceState);  </span><br><span class="line">       setContentView(R.layout.activity_main);  </span><br><span class="line">  </span><br><span class="line">       <span class="keyword">final</span> RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);  </span><br><span class="line">       <span class="comment">// 创建线性布局管理器</span></span><br><span class="line">       <span class="keyword">final</span> LinearLayoutManager layoutManager = <span class="keyword">new</span> LinearLayoutManager(<span class="keyword">this</span>);  </span><br><span class="line">       <span class="comment">// 为RecyclerView指定布局管理对象  </span></span><br><span class="line">       recyclerView.setLayoutManager(layoutManager);  </span><br><span class="line">      </span><br><span class="line">       <span class="keyword">final</span> SampleRecyclerAdapter sampleRecyclerAdapter = <span class="keyword">new</span> SampleRecyclerAdapter();  </span><br><span class="line"></span><br><span class="line"><span class="comment">//设置动画</span></span><br><span class="line">   	recyclerView.setItemAnimator(ItemAnimator)</span><br><span class="line"></span><br><span class="line">       recyclerView.setAdapter(sampleRecyclerAdapter);  </span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="自定义adapter">自定义adapter</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SampleRecyclerAdapter</span> <span class="keyword">extends</span> </span><br><span class="line">        <span class="title">RecyclerView</span>.<span class="title">Adapter</span>&lt;<span class="title">SampleRecyclerAdapter</span>.<span class="title">ViewHolder</span>&gt;  </span><br><span class="line"></span>&#123; </span><br><span class="line">    </span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 用于创建onCreateViewHolder</span></span><br><span class="line">    <span class="annotation">@Override</span>  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> ViewHolder <span class="title">onCreateViewHolder</span><span class="params">(ViewGroup parentViewGroup, <span class="keyword">int</span> i)</span>  </span><br><span class="line">    </span>&#123;  </span><br><span class="line">        View item = LayoutInflater.from(context).inflate(  </span><br><span class="line">                R.layout.***, parentViewGroup, <span class="keyword">false</span>);  </span><br><span class="line">        <span class="comment">//recyclerview未提供onitemclick方法，需要自己添加</span></span><br><span class="line"> item.setOnClickListener(...);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ViewHolder(item);  </span><br><span class="line">                  </span><br><span class="line">    &#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 为ViewHolder设置数据  </span></span><br><span class="line">    <span class="annotation">@Override</span>  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBindViewHolder</span><span class="params">(ViewHolder viewHolder, <span class="keyword">final</span> <span class="keyword">int</span> position)</span>  </span><br><span class="line">    </span>&#123;  </span><br><span class="line">        <span class="comment">//  获取当前item中显示的数据  </span></span><br><span class="line">        <span class="keyword">final</span> Model model = list.get(position);  </span><br><span class="line">          </span><br><span class="line">        <span class="comment">//  设置要显示的数据  </span></span><br><span class="line">        viewHolder.textViewSample.setText(**);  </span><br><span class="line">        viewHolder.itemView.setTag(**);  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="annotation">@Override</span>  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getItemCount</span><span class="params">()</span>  </span><br><span class="line">    </span>&#123;  </span><br><span class="line">  </span><br><span class="line">        <span class="keyword">return</span> list.size();  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="comment">//  删除指定的Item  </span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">removeData</span><span class="params">(<span class="keyword">int</span> position)</span>  </span><br><span class="line">    </span>&#123;  </span><br><span class="line">        list.remove(position);  </span><br><span class="line">        <span class="comment">//  通知RecyclerView控件某个Item已经被删除  </span></span><br><span class="line">        notifyItemRemoved(position);  </span><br><span class="line">          </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="comment">//  在指定位置添加一个新的Item  </span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addItem</span><span class="params">(Model model,<span class="keyword">int</span> positionToAdd)</span>  </span><br><span class="line">    </span>&#123;  </span><br><span class="line">   	    list.add(model);</span><br><span class="line">        <span class="comment">//  通知RecyclerView控件插入了某个Item  </span></span><br><span class="line">        notifyItemInserted(positionToAdd);  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ViewHolder</span> <span class="keyword">extends</span> <span class="title">RecyclerView</span>.<span class="title">ViewHolder</span>  </span><br><span class="line">    </span>&#123;  </span><br><span class="line">  </span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> TextView textViewSample;  </span><br><span class="line">  </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">ViewHolder</span><span class="params">(View itemView)</span>  </span><br><span class="line">        </span>&#123;  </span><br><span class="line">            <span class="keyword">super</span>(itemView);  </span><br><span class="line">  </span><br><span class="line">            textViewSample = (TextView) itemView  </span><br><span class="line">                    .findViewById(R.id.textViewSample);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="自定义itemAnimator">自定义itemAnimator</h1><p>基本使用其实与普通listview区别不大，自定义item动画是其比较复杂的部分。<br>谷歌官方的itemAnimator的解释如下：<br><a href="https://developer.android.com/reference/android/support/v7/widget/RecyclerView.ItemAnimator.html" target="_blank" rel="external">https://developer.android.com/reference/android/support/v7/widget/RecyclerView.ItemAnimator.html</a><br>下文为一个增加item时动画的示例，<br><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyItemAnimator</span> <span class="keyword">extends</span> <span class="title">RecyclerView</span>.<span class="title">ItemAnimator</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    List&lt;RecyclerView.ViewHolder&gt; mAnimationAddViewHolders = <span class="keyword">new</span> ArrayList&lt;RecyclerView.ViewHolder&gt;();</span><br><span class="line"> List&lt;RecyclerView.ViewHolder&gt; mAnimationRemoveViewHolders = <span class="keyword">new</span> ArrayList&lt;RecyclerView.ViewHolder&gt;();</span><br><span class="line">    <span class="comment">//需要执行动画时会系统会调用，用户无需手动调用</span></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">runPendingAnimations</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!mAnimationAddViewHolders.isEmpty()) &#123;</span><br><span class="line"> </span><br><span class="line">            AnimatorSet animator;</span><br><span class="line">            View <span class="keyword">target</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">final</span> RecyclerView.ViewHolder viewHolder : mAnimationAddViewHolders) &#123;</span><br><span class="line">                <span class="keyword">target</span> = viewHolder.itemView;</span><br><span class="line">                animator = <span class="keyword">new</span> AnimatorSet();</span><br><span class="line"></span><br><span class="line">                animator.playTogether(</span><br><span class="line">                        ObjectAnimator.ofFloat(<span class="keyword">target</span>, <span class="string">"translationX"</span>, -<span class="keyword">target</span>.getMeasuredWidth(), <span class="number">0.0</span>f),</span><br><span class="line">                        ObjectAnimator.ofFloat(<span class="keyword">target</span>, <span class="string">"alpha"</span>, <span class="keyword">target</span>.getAlpha(), <span class="number">1.0</span>f)</span><br><span class="line">                );</span><br><span class="line"></span><br><span class="line">                animator.setTarget(<span class="keyword">target</span>);</span><br><span class="line">                animator.setDuration(<span class="number">100</span>);</span><br><span class="line">                animator.addListener(<span class="keyword">new</span> AnimatorListener() &#123;</span><br><span class="line">                    <span class="annotation">@Override</span></span><br><span class="line">                    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onAnimationEnd</span><span class="params">(Animator animation)</span> </span>&#123;</span><br><span class="line">                        mAnimationAddViewHolders.remove(viewHolder);</span><br><span class="line"> 			 <span class="keyword">if</span> (!isRunning()) &#123;</span><br><span class="line">			dispatchAnimationsFinished();</span><br><span class="line">			&#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">                animator.start();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span>(!mAnimationRemoveViewHolders.isEmpty())&#123;</span><br><span class="line">	&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//remove时系统会调用，返回值表示是否需要执行动画</span></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">animateRemove</span><span class="params">(RecyclerView.ViewHolder viewHolder)</span> </span>&#123;</span><br><span class="line">         <span class="function"><span class="keyword">return</span> mAnimationRemoveViewHolders.<span class="title">add</span><span class="params">(viewHolder)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//viewholder添加时系统会调用</span></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">animateAdd</span><span class="params">(RecyclerView.ViewHolder viewHolder)</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">return</span> mAnimationAddViewHolders.<span class="title">add</span><span class="params">(viewHolder)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">animateMove</span><span class="params">(RecyclerView.ViewHolder viewHolder, <span class="keyword">int</span> i, <span class="keyword">int</span> i2, <span class="keyword">int</span> i3, <span class="keyword">int</span> i4)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">endAnimation</span><span class="params">(RecyclerView.ViewHolder viewHolder)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">endAnimations</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">isRunning</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> !(mAnimationAddViewHolders.isEmpty()&amp;&amp;mAnimationRemoveViewHolders.isEmpty());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="总结">总结</h1><p>RecycyclerView的使用还是比较简单的，相对listview来讲帮我们处理了较多的逻辑，<br>但onClick监听等都要自己添加。<br>对于item的动画，实现其实也不是特别难。。<br>以下为github上第三方的itemAnimation，看了以后会对其使用了解更充分。<br><a href="https://github.com/dkmeteor/RecyclerViewAnimator" target="_blank" rel="external">https://github.com/dkmeteor/RecyclerViewAnimator</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/RecyclerView/">RecyclerView</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://coderrobin.com/2015/02/11/Android-RecyclerView使用/" data-title="Android RecyclerView使用及自定义itemAnimator | An Android Coder" data-tsina="undefined" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/02/12/java并发编程基础-ReentrantLock/" title="java并发编程基础-ReentrantLock及LinkedBlockingQueue源码分析">
+  <strong>上一篇：</strong><br/>
+  <span>
+  java并发编程基础-ReentrantLock及LinkedBlockingQueue源码分析</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/02/08/开源项目解析-Android-Universal-Image-Loader/"  title="开源项目解析-Android-Universal-Image-Loader">
+ <strong>下一篇：</strong><br/> 
+ <span>开源项目解析-Android-Universal-Image-Loader
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/02/11/Android-RecyclerView使用/" data-title="Android RecyclerView使用及自定义itemAnimator" data-url="http://coderrobin.com/2015/02/11/Android-RecyclerView使用/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#基本使用"><span class="toc-number">2.</span> <span class="toc-text">基本使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#在activity中使用"><span class="toc-number">2.1.</span> <span class="toc-text">在activity中使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义adapter"><span class="toc-number">2.2.</span> <span class="toc-text">自定义adapter</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#自定义itemAnimator"><span class="toc-number">3.</span> <span class="toc-text">自定义itemAnimator</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Android/" title="Android">Android<sup>15</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/读书笔记/" title="读书笔记">读书笔记<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/动画/" title="动画">动画<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/自定义控件/" title="自定义控件">自定义控件<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Annotation/" title="Annotation">Annotation<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ReentrantLock/" title="ReentrantLock">ReentrantLock<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/fragment/" title="fragment">fragment<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/viewpager/" title="viewpager">viewpager<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/uil/" title="uil">uil<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CustomViews/" title="CustomViews">CustomViews<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/自定义控件布局/" title="自定义控件布局">自定义控件布局<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PagerSlidingTabStrip/" title="PagerSlidingTabStrip">PagerSlidingTabStrip<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EventBus/" title="EventBus">EventBus<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/volley/" title="volley">volley<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/反射/" title="反射">反射<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/RecyclerView/" title="RecyclerView">RecyclerView<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LoaderManager/" title="LoaderManager">LoaderManager<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.codekk.com/" target="_blank" title="codekk开源项目解析">codekk开源项目解析</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.trinea.cn/" target="_blank" title="Trinea">Trinea</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.daimajia.com/" target="_blank" title="代码家">代码家</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://stormzhang.com/" target="_blank" title="stormzhang">stormzhang</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/xiaanming/" target="_blank" title="夏安明">夏安明</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/bboyfeiyu" target="_blank" title="Mr.Simple">Mr.Simple</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/aigestudio/" target="_blank" title="AigeSudio">AigeSudio</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.rainstops.com/" target="_blank" title="rainstops">rainstops</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/sunzn/" target="_blank" title="sunzn&#39;Blog">sunzn&#39;Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/guolin_blog" target="_blank" title="郭霖">郭霖</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/lmj623565791" target="_blank" title="鸿洋">鸿洋</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m CoderRobin. <br/>
+			Welcome here to enjoy android.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/206001274" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/CoderRobin" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:rzb7873@hotmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="http://coderrobin.com/about" target="_blank" title="CoderRobin">CoderRobin</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"rzb7873"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -1,0 +1,604 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>activity与fragment切换动画 | An Android Coder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="CoderRobin">
+    
+
+    
+    <meta name="description" content="Activity切换动画  activity切换的动画为teen Animation，包含了基本的动画类型,scale、alpha、translate和raotation，当然也可以是animationset。详见上一篇博文android 控件动画基础。  以下为activity切换动画的具体方式
+通过theme设置切换动画在 AndroidManifest.xml 文件中，通过 android:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="activity与fragment切换动画">
+<meta property="og:url" content="http://coderrobin.com/2015/01/29/activity与fragment切换动画/index.html">
+<meta property="og:site_name" content="An Android Coder">
+<meta property="og:description" content="Activity切换动画  activity切换的动画为teen Animation，包含了基本的动画类型,scale、alpha、translate和raotation，当然也可以是animationset。详见上一篇博文android 控件动画基础。  以下为activity切换动画的具体方式
+通过theme设置切换动画在 AndroidManifest.xml 文件中，通过 android:">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="activity与fragment切换动画">
+<meta name="twitter:description" content="Activity切换动画  activity切换的动画为teen Animation，包含了基本的动画类型,scale、alpha、translate和raotation，当然也可以是animationset。详见上一篇博文android 控件动画基础。  以下为activity切换动画的具体方式
+通过theme设置切换动画在 AndroidManifest.xml 文件中，通过 android:">
+
+    
+    <link rel="alternative" href="/atom.xml" title="An Android Coder" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="An Android Coder">An Android Coder</a></h1>
+				<h2 class="blog-motto">CoderRobin&#39;s Blog</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:coderrobin.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/01/29/activity与fragment切换动画/" title="activity与fragment切换动画" itemprop="url">activity与fragment切换动画</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://coderrobin.com/about" title="CoderRobin" target="_blank" itemprop="author">CoderRobin</a>
+		
+  <p class="article-time">
+    <time datetime="2015-01-28T16:58:34.000Z" itemprop="datePublished"> 发表于 Jan 29 2015</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Activity切换动画"><span class="toc-number">1.</span> <span class="toc-text">Activity切换动画</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#通过theme设置切换动画"><span class="toc-number">1.1.</span> <span class="toc-text">通过theme设置切换动画</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#调用overridePendingTransition(int_enterAnim,_int_exitAnim)方法"><span class="toc-number">1.2.</span> <span class="toc-text">调用overridePendingTransition(int enterAnim, int exitAnim)方法</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Fragment切换动画"><span class="toc-number">2.</span> <span class="toc-text">Fragment切换动画</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#标准切换动画："><span class="toc-number">2.1.</span> <span class="toc-text">标准切换动画：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义切换动画"><span class="toc-number">2.2.</span> <span class="toc-text">自定义切换动画</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Activity切换动画">Activity切换动画</h1><p>  activity切换的动画为teen Animation，包含了基本的动画类型,scale、alpha、translate和raotation，当然也可以是animationset。详见上一篇博文<a href="http://coderrobin.com/2015/01/28/android-view%E5%8A%A8%E7%94%BB%E5%9F%BA%E7%A1%80/" target="_blank" rel="external">android 控件动画基础</a>。<br>  以下为activity切换动画的具体方式</p>
+<h2 id="通过theme设置切换动画">通过theme设置切换动画</h2><p>在 AndroidManifest.xml 文件中，通过 android:theme 属性设置 Activity 的主题。主题中定义了关于 Activity 外观的很多特性。其中就包含 Activity 的切换动画。在主题style中使用 windowAnimationStyle 这个属性，即可指定切换动画的style。<br><a id="more"></a><br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;style <span class="property">name</span>=<span class="string">"AnimActivityTheme"</span>&gt;</span><br><span class="line">    &lt;<span class="property">item</span> <span class="property">name</span>=<span class="string">"android:windowAnimationStyle"</span>&gt;@style/FeelyouWindowAnimTheme&lt;/<span class="property">item</span>&gt;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure></p>
+<p>定义切换动画 style<br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;style <span class="property">name</span>=<span class="string">"FeelyouWindowAnimTheme"</span> parent=<span class="string">"@android:style/Animation.Activity"</span>&gt;</span><br><span class="line">    &lt;<span class="property">item</span> <span class="property">name</span>=<span class="string">"android:activityOpenEnterAnimation"</span>&gt;@anim/in_from_left&lt;/<span class="property">item</span>&gt;</span><br><span class="line">    &lt;<span class="property">item</span> <span class="property">name</span>=<span class="string">"android:activityOpenExitAnimation"</span>&gt;@anim/out_from_right&lt;/<span class="property">item</span>&gt;</span><br><span class="line">    &lt;<span class="property">item</span> <span class="property">name</span>=<span class="string">"android:activityCloseEnterAnimation"</span>&gt;@anim/in_from_right&lt;/<span class="property">item</span>&gt;</span><br><span class="line">    &lt;<span class="property">item</span> <span class="property">name</span>=<span class="string">"android:activityCloseExitAnimation"</span>&gt;@anim/out_from_left&lt;/<span class="property">item</span>&gt;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure></p>
+<p>注意需要继承自 @android:style/Animation.Activity。具体这4个属性什么意思呢？假设我们有 2 个 Activity，分别是 A1 和 A2：<br>    当我们从 A1 启动 A2 时，A1 从屏幕上消失，这个动画叫做 android:activityOpenExitAnimation<br>    当我们从 A1 启动 A2 时，A2 出现在屏幕上，这个动画叫做 android:activityOpenEnterAnimation<br>    当我们从 A2 退出回到 A1 时，A2 从屏幕上消失，这个叫做 android:activityCloseExitAnimation<br>    当我们从 A2 退出回到 A1 时，A1 出现在屏幕上，这个叫做 android:activityCloseEnterAnimation</p>
+<h2 id="调用overridePendingTransition(int_enterAnim,_int_exitAnim)方法">调用overridePendingTransition(int enterAnim, int exitAnim)方法</h2><p>　　这个方法在startActivity(Intent) or finish()之后被调用，指定接下来的这个切换动画。第一个参数：enterAnim，是新的Activity的进入动画的resource ID，第二个参数exitAnim，是旧的Activity(当前的Activity)离开动画的resource ID。所以这两个参数的对象是两个Activity。</p>
+<h1 id="Fragment切换动画">Fragment切换动画</h1><p>　　Fragment的切换动画实现分为使用v4包和不使用v4包两种情况，不使用v4包的话，最低API Level需要是11。</p>
+<h2 id="标准切换动画：">标准切换动画：</h2><p>　　可以给Fragment指定标准的切换动画，通过setTransition(int transit)方法。</p>
+<p>　　该方法可传入的三个参数是：</p>
+<p>　　TRANSIT_NONE,</p>
+<p>　　TRANSIT_FRAGMENT_OPEN,</p>
+<p>　　TRANSIT_FRAGMENT_CLOSE</p>
+<p>　　分别对应无动画、打开形式的动画和关闭形式的动画。</p>
+<p>　　标准动画设置好后，在Fragment添加和移除的时候都会有。</p>
+<h2 id="自定义切换动画">自定义切换动画</h2><p>　　自定义切换动画是通过setCustomAnimations()方法，因为Fragment添加时可以指定加入到Back Stack中，所以切换动画有添加、移除、从Back stack中pop出来，还有进入四种情况。</p>
+<p>　　注意setCustomAnimations()方法必须在add、remove、replace调用之前被设置，否则不起作用。</p>
+<p>android.app.Fragment</p>
+<p>　　不使用v4包的情况下(min API &gt;=11)所对应的动画类型是Property Animation。</p>
+<p>　　即动画资源文件需要放在res\animator\目录下，且根标签是<set>, <objectanimator>, or <valueanimator>三者之一。</valueanimator></objectanimator></set></p>
+<p>　　这一点也可以从Fragment中的这个方法看出：onCreateAnimator(int transit, boolean enter, int nextAnim)，返回值是Animator。</p>
+<p>　　自定义切换动画时，四个参数的形式setCustomAnimations (int enter, int exit, int popEnter, int popExit)是API Level 13才有的，11只引入了两个动画的形式，即无法指定Back Stack栈操作时的切换动画。</p>
+<p>　　代码例子：</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">void</span> <span class="title">addFragment</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">null</span> == mFragmentManager) &#123;</span><br><span class="line">        mFragmentManager = getFragmentManager();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    mTextFragmentOne = <span class="keyword">new</span> MyFragmentOne();</span><br><span class="line">    FragmentTransaction fragmentTransaction = mFragmentManager</span><br><span class="line">            .beginTransaction();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 标准动画</span></span><br><span class="line">    <span class="comment">// fragmentTransaction</span></span><br><span class="line">    <span class="comment">// .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);</span></span><br><span class="line">    <span class="comment">// fragmentTransaction</span></span><br><span class="line">    <span class="comment">// .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// fragmentTransaction</span></span><br><span class="line">    <span class="comment">// .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 自定义动画</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// API LEVEL 11</span></span><br><span class="line">    fragmentTransaction.setCustomAnimations(</span><br><span class="line">            R.animator.fragment_slide_left_enter,</span><br><span class="line">            R.animator.fragment_slide_right_exit);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// API LEVEL 13</span></span><br><span class="line">    <span class="comment">// fragmentTransaction.setCustomAnimations(</span></span><br><span class="line">    <span class="comment">// R.animator.fragment_slide_left_enter,</span></span><br><span class="line">    <span class="comment">// R.animator.fragment_slide_left_exit,</span></span><br><span class="line">    <span class="comment">// R.animator.fragment_slide_right_enter,</span></span><br><span class="line">    <span class="comment">// R.animator.fragment_slide_right_exit);</span></span><br><span class="line"></span><br><span class="line">    fragmentTransaction.add(R.id.container, mTextFragmentOne);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 加入到BackStack中</span></span><br><span class="line">    fragmentTransaction.addToBackStack(<span class="keyword">null</span>);</span><br><span class="line">    fragmentTransaction.commit();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>android.support.v4.app.Fragment</p>
+<p>　　使用v4包，Fragment的使用不再局限于API Level 11之上，低等级的API也可以使用，但是这时候切换动画的类型是View Animation。</p>
+<p>　　动画资源放在res\anim\路径下，和Activity的切换动画一样。</p>
+<p>　　Fragment中的方法：onCreateAnimation(int transit, boolean enter, int nextAnim)返回值Animation。</p>
+<p>　　FragmentTransaction中的setCustomAnimations()方法，两参数类型和四参数类型都可用。</p>
+<p>　　所以一般还是用v4包的这个版本，一是兼容性比较好，另外View Animation其实基本可以满足切换动画的需要。<br><figure class="highlight ocaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> void addFragment<span class="literal">()</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (null == mFragmentManager) &#123;</span><br><span class="line">        mFragmentManager = getSupportFragmentManager<span class="literal">()</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    mTextFragmentOne = <span class="keyword">new</span> <span class="type">MyFragmentOne</span><span class="literal">()</span>;</span><br><span class="line">    <span class="type">FragmentTransaction</span> fragmentTransaction = mFragmentManager</span><br><span class="line">            .beginTransaction<span class="literal">()</span>;</span><br><span class="line">    fragmentTransaction.setCustomAnimations(</span><br><span class="line">            <span class="type">R</span>.anim.push_left_in,</span><br><span class="line">            <span class="type">R</span>.anim.push_left_out,</span><br><span class="line">            <span class="type">R</span>.anim.push_left_in,</span><br><span class="line">            <span class="type">R</span>.anim.push_left_out);</span><br><span class="line"></span><br><span class="line">    fragmentTransaction.add(<span class="type">R</span>.id.container, mTextFragmentOne);</span><br><span class="line"></span><br><span class="line">    fragmentTransaction.addToBackStack(null);</span><br><span class="line">    fragmentTransaction.commit<span class="literal">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/动画/">动画</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://coderrobin.com/2015/01/29/activity与fragment切换动画/" data-title="activity与fragment切换动画 | An Android Coder" data-tsina="undefined" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/02/01/CustomViews开源组件/" title="CustomViews开源项目">
+  <strong>上一篇：</strong><br/>
+  <span>
+  CustomViews开源项目</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/01/28/android-view动画基础/"  title="android 控件动画基础">
+ <strong>下一篇：</strong><br/> 
+ <span>android 控件动画基础
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/01/29/activity与fragment切换动画/" data-title="activity与fragment切换动画" data-url="http://coderrobin.com/2015/01/29/activity与fragment切换动画/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Activity切换动画"><span class="toc-number">1.</span> <span class="toc-text">Activity切换动画</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#通过theme设置切换动画"><span class="toc-number">1.1.</span> <span class="toc-text">通过theme设置切换动画</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#调用overridePendingTransition(int_enterAnim,_int_exitAnim)方法"><span class="toc-number">1.2.</span> <span class="toc-text">调用overridePendingTransition(int enterAnim, int exitAnim)方法</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Fragment切换动画"><span class="toc-number">2.</span> <span class="toc-text">Fragment切换动画</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#标准切换动画："><span class="toc-number">2.1.</span> <span class="toc-text">标准切换动画：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义切换动画"><span class="toc-number">2.2.</span> <span class="toc-text">自定义切换动画</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Android/" title="Android">Android<sup>15</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/读书笔记/" title="读书笔记">读书笔记<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/动画/" title="动画">动画<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/自定义控件/" title="自定义控件">自定义控件<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Annotation/" title="Annotation">Annotation<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ReentrantLock/" title="ReentrantLock">ReentrantLock<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/fragment/" title="fragment">fragment<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/viewpager/" title="viewpager">viewpager<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/uil/" title="uil">uil<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CustomViews/" title="CustomViews">CustomViews<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/自定义控件布局/" title="自定义控件布局">自定义控件布局<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PagerSlidingTabStrip/" title="PagerSlidingTabStrip">PagerSlidingTabStrip<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EventBus/" title="EventBus">EventBus<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/volley/" title="volley">volley<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/反射/" title="反射">反射<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/RecyclerView/" title="RecyclerView">RecyclerView<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LoaderManager/" title="LoaderManager">LoaderManager<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.codekk.com/" target="_blank" title="codekk开源项目解析">codekk开源项目解析</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.trinea.cn/" target="_blank" title="Trinea">Trinea</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.daimajia.com/" target="_blank" title="代码家">代码家</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://stormzhang.com/" target="_blank" title="stormzhang">stormzhang</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/xiaanming/" target="_blank" title="夏安明">夏安明</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/bboyfeiyu" target="_blank" title="Mr.Simple">Mr.Simple</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/aigestudio/" target="_blank" title="AigeSudio">AigeSudio</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.rainstops.com/" target="_blank" title="rainstops">rainstops</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/sunzn/" target="_blank" title="sunzn&#39;Blog">sunzn&#39;Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/guolin_blog" target="_blank" title="郭霖">郭霖</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/lmj623565791" target="_blank" title="鸿洋">鸿洋</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m CoderRobin. <br/>
+			Welcome here to enjoy android.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/206001274" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/CoderRobin" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:rzb7873@hotmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="http://coderrobin.com/about" target="_blank" title="CoderRobin">CoderRobin</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"rzb7873"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

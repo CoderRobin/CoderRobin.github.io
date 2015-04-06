@@ -1,0 +1,597 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>开源项目解析-Android-Universal-Image-Loader | An Android Coder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="CoderRobin">
+    
+
+    
+    <meta name="description" content="简介Android-Universal-Image-Loader是一个用来加载图片（包括网络图片和本地图片）的开源项目，实现了网络图片的下载、本地图片的加载、图片的解析、图片的缓存等机制。其实很多大神都已经解析过此开源项目。包括但不限于以下博客codekk解析夏安明的3篇博文Android开源框架Universal-Image-Loader完全解析（一）—- 基本介绍及使用Android开源框架U">
+<meta property="og:type" content="article">
+<meta property="og:title" content="开源项目解析-Android-Universal-Image-Loader">
+<meta property="og:url" content="http://coderrobin.com/2015/02/08/开源项目解析-Android-Universal-Image-Loader/index.html">
+<meta property="og:site_name" content="An Android Coder">
+<meta property="og:description" content="简介Android-Universal-Image-Loader是一个用来加载图片（包括网络图片和本地图片）的开源项目，实现了网络图片的下载、本地图片的加载、图片的解析、图片的缓存等机制。其实很多大神都已经解析过此开源项目。包括但不限于以下博客codekk解析夏安明的3篇博文Android开源框架Universal-Image-Loader完全解析（一）—- 基本介绍及使用Android开源框架U">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="开源项目解析-Android-Universal-Image-Loader">
+<meta name="twitter:description" content="简介Android-Universal-Image-Loader是一个用来加载图片（包括网络图片和本地图片）的开源项目，实现了网络图片的下载、本地图片的加载、图片的解析、图片的缓存等机制。其实很多大神都已经解析过此开源项目。包括但不限于以下博客codekk解析夏安明的3篇博文Android开源框架Universal-Image-Loader完全解析（一）—- 基本介绍及使用Android开源框架U">
+
+    
+    <link rel="alternative" href="/atom.xml" title="An Android Coder" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="An Android Coder">An Android Coder</a></h1>
+				<h2 class="blog-motto">CoderRobin&#39;s Blog</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:coderrobin.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/02/08/开源项目解析-Android-Universal-Image-Loader/" title="开源项目解析-Android-Universal-Image-Loader" itemprop="url">开源项目解析-Android-Universal-Image-Loader</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://coderrobin.com/about" title="CoderRobin" target="_blank" itemprop="author">CoderRobin</a>
+		
+  <p class="article-time">
+    <time datetime="2015-02-08T14:42:26.000Z" itemprop="datePublished"> 发表于 Feb 8 2015</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#使用"><span class="toc-number">2.</span> <span class="toc-text">使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#初始化与配置ImageLoader"><span class="toc-number">2.1.</span> <span class="toc-text">初始化与配置ImageLoader</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#加载配置项"><span class="toc-number">2.2.</span> <span class="toc-text">加载配置项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载与加载图片"><span class="toc-number">2.3.</span> <span class="toc-text">下载与加载图片</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其它TIP"><span class="toc-number">2.4.</span> <span class="toc-text">其它TIP</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#源码分析"><span class="toc-number">3.</span> <span class="toc-text">源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#uil涉及到的模块与概念"><span class="toc-number">3.1.</span> <span class="toc-text">uil涉及到的模块与概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ViewAware分析，对view控件的封装,ImageViewAware即继承该类"><span class="toc-number">3.2.</span> <span class="toc-text">ViewAware分析，对view控件的封装,ImageViewAware即继承该类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ImageLoader类分析"><span class="toc-number">3.3.</span> <span class="toc-text">ImageLoader类分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ImageLoaderEngine引擎，负责提交任务给各线程池"><span class="toc-number">3.4.</span> <span class="toc-text">ImageLoaderEngine引擎，负责提交任务给各线程池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#各task解析"><span class="toc-number">3.5.</span> <span class="toc-text">各task解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LoadAndDisplayImageTask"><span class="toc-number">3.5.1.</span> <span class="toc-text">LoadAndDisplayImageTask</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ProcessAndDisplayImageTask"><span class="toc-number">3.5.2.</span> <span class="toc-text">ProcessAndDisplayImageTask</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DisplayBitmapTask"><span class="toc-number">3.5.3.</span> <span class="toc-text">DisplayBitmapTask</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#downloader"><span class="toc-number">3.6.</span> <span class="toc-text">downloader</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#decoder"><span class="toc-number">3.7.</span> <span class="toc-text">decoder</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#displayer"><span class="toc-number">3.8.</span> <span class="toc-text">displayer</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<h1 id="简介">简介</h1><p>Android-Universal-Image-Loader是一个用来加载图片（包括网络图片和本地图片）的开源项目，实现了网络图片的下载、本地图片的加载、图片的解析、图片的缓存等机制。<br>其实很多大神都已经解析过此开源项目。<br>包括但不限于以下博客<br><a href="http://www.codekk.com/open-source-project-analysis/detail/Android/huxian99/Android%20Universal%20Image%20Loader%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90" target="_blank" rel="external">codekk解析</a><br>夏安明的3篇博文<br><a href="http://blog.csdn.net/xiaanming/article/details/26810303" target="_blank" rel="external">Android开源框架Universal-Image-Loader完全解析（一）—- 基本介绍及使用</a><br><a href="http://blog.csdn.net/xiaanming/article/details/27525741" target="_blank" rel="external">Android开源框架Universal-Image-Loader完全解析（二）—- 图片缓存策略详解</a><br><a href="http://blog.csdn.net/xiaanming/article/details/39057201" target="_blank" rel="external">Android开源框架Universal-Image-Loader完全解析（三）—-源代码解读</a><br> 但我还是继续写这篇博文的原因主要还是让自己好好看下这部分代码。哈哈，大家想要了解的话看上面几篇博客也已经够了。<br><a id="more"></a></p>
+<h1 id="使用">使用</h1><p>对于其使用非常简单</p>
+<h2 id="初始化与配置ImageLoader">初始化与配置ImageLoader</h2><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//默认配置</span></div><div class="line"> ImageLoaderConfiguration configuration <span class="subst">=</span> ImageLoaderConfiguration </div><div class="line"> <span class="built_in">.</span>createDefault(this); </div><div class="line"></div><div class="line"><span class="comment">//个性化配置，建造者模式</span></div><div class="line"> File cacheDir <span class="subst">=</span> StorageUtils<span class="built_in">.</span>getCacheDirectory(context); </div><div class="line"> ImageLoaderConfiguration config <span class="subst">=</span> <span class="literal">new</span> ImageLoaderConfiguration<span class="built_in">.</span>Builder(context) </div><div class="line"> <span class="built_in">.</span>memoryCacheExtraOptions(<span class="number">480</span>, <span class="number">800</span>) <span class="comment">// 默认屏幕大小</span></div><div class="line"> <span class="built_in">.</span>diskCacheExtraOptions(<span class="number">480</span>, <span class="number">800</span>, CompressFormat<span class="built_in">.</span>JPEG, <span class="number">75</span>, <span class="built_in">null</span>) </div><div class="line"> <span class="built_in">.</span>taskExecutor(<span class="attribute">…</span>) <span class="comment">//线程池</span></div><div class="line"> <span class="built_in">.</span>taskExecutorForCachedImages(<span class="attribute">…</span>) </div><div class="line"> <span class="built_in">.</span>threadPoolSize(<span class="number">3</span>) <span class="comment">//</span></div><div class="line"> <span class="built_in">.</span>threadPriority(<span class="keyword">Thread</span><span class="built_in">.</span>NORM_PRIORITY <span class="subst">-</span> <span class="number">1</span>) <span class="comment">// 线程优先级</span></div><div class="line"> <span class="built_in">.</span>tasksProcessingOrder(QueueProcessingType<span class="built_in">.</span>FIFO) <span class="comment">//处理顺序，先进先出等 </span></div><div class="line"> <span class="built_in">.</span>denyCacheImageMultipleSizesInMemory() </div><div class="line"> <span class="built_in">.</span>memoryCache(<span class="literal">new</span> LruMemoryCache(<span class="number">2</span> <span class="subst"><em></em></span> <span class="number">1024</span> <span class="subst"></span> <span class="number">1024</span>)) <span class="comment">//内存缓存 </span></div><div class="line"> <span class="built_in">.</span>memoryCacheSize(<span class="number">2</span> <span class="subst"><em></em></span> <span class="number">1024</span> <span class="subst"></span> <span class="number">1024</span>) </div><div class="line"> <span class="built_in">.</span>memoryCacheSizePercentage(<span class="number">13</span>) <span class="comment">// default </span></div><div class="line"> <span class="built_in">.</span>diskCache(<span class="literal">new</span> UnlimitedDiscCache(cacheDir)) <span class="comment">// 磁盘缓存，自定义地址</span></div><div class="line"> <span class="built_in">.</span>diskCacheSize(<span class="number">50</span> <span class="subst"><em></em></span> <span class="number">1024</span> <span class="subst"></span> <span class="number">1024</span>) </div><div class="line"> <span class="built_in">.</span>diskCacheFileCount(<span class="number">100</span>) </div><div class="line"> <span class="built_in">.</span>diskCacheFileNameGenerator(<span class="literal">new</span> HashCodeFileNameGenerator()) <span class="comment">// default </span></div><div class="line"> <span class="built_in">.</span>imageDownloader(<span class="literal">new</span> BaseImageDownloader(context)) <span class="comment">// 下载器 </span></div><div class="line"> <span class="built_in">.</span>imageDecoder(<span class="literal">new</span> BaseImageDecoder()) <span class="comment">// 解析器</span></div><div class="line"> <span class="built_in">.</span>defaultDisplayImageOptions(DisplayImageOptions<span class="built_in">.</span>createSimple()) </div><div class="line"> <span class="built_in">.</span>build(); </div><div class="line"> ImageLoader<span class="built_in">.</span>getInstance()<span class="built_in">.</span>init(configuration);</div></pre></td></tr></table></figure>
+
+<h2 id="加载配置项">加载配置项</h2><p></p><p>对于每次要加载的显示项在加载时可进行设置</p><p></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">DisplayImageOptions options = new DisplayImageOptions.Builder() </div><div class="line"> .showImageOnLoading(R.drawable.ic_stub) //设置加载前默认图片</div><div class="line"> .showImageForEmptyUri(R.drawable.ic_empty) </div><div class="line"> .showImageOnFail(R.drawable.ic_error) </div><div class="line"> .resetViewBeforeLoading(false) //加载前会清空图片</div><div class="line"> .delayBeforeLoading(<span class="number">1000</span>) </div><div class="line"> .cacheInMemory(true) //开始缓存</div><div class="line"> .cacheOnDisk(true) </div><div class="line"> .preProcessor(<span class="keyword">…</span>) </div><div class="line"> .postProcessor(<span class="keyword">…</span>) </div><div class="line"> .extraForDownloader(<span class="keyword">…</span>) </div><div class="line"> .considerExifParams(false) // default </div><div class="line"> .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2) //类似imageview scaleType</div><div class="line"> .bitmapConfig(Bitmap.Config.ARGB_8888) // 在要求不高时可以用<span class="number">555</span>缩小内存占用 </div><div class="line"> .decodingOptions(<span class="keyword">…</span>) </div><div class="line"> .displayer(new SimpleBitmapDisplayer()) // 渲染器，可以加一些特殊效果，例如矩形圆角等 </div><div class="line"> .handler(new Handler()) // default </div><div class="line"> .build();</div></pre></td></tr></table></figure>
+
+<h2 id="下载与加载图片">下载与加载图片</h2><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"> loadImage需要自己给imageview在回调里设置图片</div><div class="line"> ImageLoader.getInstance().loadImage(imageUrl, mImageSize, options, <span class="keyword">new</span> SimpleImageLoadingListener(){ </div><div class="line"> </div><div class="line"> <span class="annotation">@Override</span> </div><div class="line"> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onLoadingComplete</span>(String imageUri, View view, </div><div class="line"> Bitmap loadedImage) { </div><div class="line"> <span class="keyword">super</span>.onLoadingComplete(imageUri, view, loadedImage); </div><div class="line"> mImageView.setImageBitmap(loadedImage); </div><div class="line"> } </div><div class="line"> </div><div class="line"> }); </div><div class="line">或</div><div class="line">displayImage直接将imageview传给displayImage方法</div><div class="line"> ImageLoader.getInstance().displayImage(imageUrl, mImageView, options);</div></pre></td></tr></table></figure>
+
+<h2 id="其它TIP">其它TIP</h2><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">设置滑动时不加载</div><div class="line">setOnScrollListener(<span class="keyword">new</span> PauseOnScrollListener(imageLoader, pauseOnScroll, pauseOnFling)); </div><div class="line"></div><div class="line">图片url</div><div class="line"> <span class="built_in">String</span> netPath=<span class="string">“<a href="http://coderrobin/image/.png" target="_blank" rel="external">http://coderrobin/image/.png</a>“</span>;</div><div class="line"> <span class="built_in">String</span> localPath=<span class="string">“/mnt/sdcard/coderrobin.png”</span> </div><div class="line"> <span class="built_in">String</span> contentprividerUrl = <span class="string">“content://media/external/audio/albumart/13”</span>; </div><div class="line"> <span class="comment">//图片来源于assets </span></div><div class="line"> <span class="built_in">String</span> assetsUrl = Scheme.ASSETS.wrap(<span class="string">“image.png”</span>); </div><div class="line"> <span class="comment">//图片来源于 </span></div><div class="line"> <span class="built_in">String</span> drawableUrl = Scheme.DRAWABLE.wrap(<span class="string">“R.drawable.image”</span>);</div></pre></td></tr></table></figure>
+
+<h1 id="源码分析">源码分析</h1><p>源码涉及的代码较多，本文只分析比较核心的几个类</p>
+<h2 id="uil涉及到的模块与概念">uil涉及到的模块与概念</h2><p>ImageLoaderEngine：任务分发器，负责分发LoadAndDisplayImageTask和ProcessAndDisplayImageTask给具体的线程池去执行<br>ImageAware：显示图片的对象，可以是ImageView等,主要为对imageview用弱引用封装，并且增加了获取imageview参数（宽高等）的接口<br>ImageDownloader：图片下载器，负责从图片的各个来源获取输入流（网络、本地等）<br>Cache：图片缓存，分为MemoryCache和DiskCache。<br>MemoryCache：内存图片缓存，常用LruMemoryCache。<br>DiskCache：磁盘图片缓存.<br>ImageDecoder：图片解码器，负责将图片输入流InputStream转换为Bitmap对象,默认调用bitmaoFactory.decode方法<br>BitmapProcessor：图片处理器，负责从缓存读取或写入前对图片进行处理。<br>BitmapDisplayer：将Bitmap对象显示在相应的控件ImageAware上, 加一些特殊显示效果<br>LoadAndDisplayImageTask：用于加载并显示图片的任务。<br>ProcessAndDisplayImageTask：用于处理并显示图片的任务。<br>DisplayBitmapTask：用于显示图片的任务。</p>
+<h2 id="ViewAware分析，对view控件的封装,ImageViewAware即继承该类">ViewAware分析，对view控件的封装,ImageViewAware即继承该类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">ViewAware</span> <span class="keyword">implements</span> <span class="title">ImageAware</span> </span>&#123;</span><br><span class="line">	<span class="keyword">protected</span> Reference&lt;View&gt; viewRef;</span><br><span class="line">	<span class="keyword">protected</span> <span class="keyword">boolean</span> checkActualViewSize;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">ViewAware</span><span class="params">(View view, <span class="keyword">boolean</span> checkActualViewSize)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (view == <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"view must not be null"</span>);</span><br><span class="line">               <span class="comment">//弱引用封装view,避免不能被系统回收</span></span><br><span class="line">		<span class="keyword">this</span>.viewRef = <span class="keyword">new</span> WeakReference&lt;View&gt;(view);</span><br><span class="line">		<span class="keyword">this</span>.checkActualViewSize = checkActualViewSize;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//获取宽度方法，分为是不是wrap_content(onMeasure中at_most)</span></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getWidth</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		View view = viewRef.get();</span><br><span class="line">		<span class="keyword">if</span> (view != <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">final</span> ViewGroup.LayoutParams params = view.getLayoutParams();</span><br><span class="line">			<span class="keyword">int</span> width = <span class="number">0</span>;</span><br><span class="line">			<span class="keyword">if</span> (checkActualViewSize &amp;&amp; params != <span class="keyword">null</span> &amp;&amp; params.width != ViewGroup.LayoutParams.WRAP_CONTENT) &#123;</span><br><span class="line">				width = view.getWidth(); <span class="comment">// Get actual image width</span></span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> (width &lt;= <span class="number">0</span> &amp;&amp; params != <span class="keyword">null</span>) width = params.width; <span class="comment">// Get layout width parameter</span></span><br><span class="line">			<span class="keyword">return</span> width;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">       <span class="comment">//设置图片，用looper判断是否在主线程</span></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">setImageBitmap</span><span class="params">(Bitmap bitmap)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (Looper.myLooper() == Looper.getMainLooper()) &#123;</span><br><span class="line">			View view = viewRef.get();</span><br><span class="line">			<span class="keyword">if</span> (view != <span class="keyword">null</span>) &#123;</span><br><span class="line">				setImageBitmapInto(bitmap, view);</span><br><span class="line">				<span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			L.w(WARN_CANT_SET_BITMAP);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ImageLoader类分析">ImageLoader类分析</h2><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> ImageLoader &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> ImageLoaderConfiguration configuration;</span><br><span class="line">	<span class="comment">//任务引擎（分发器）</span></span><br><span class="line">	<span class="keyword">private</span> ImageLoaderEngine engine;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> ImageLoadingListener emptyListener = <span class="keyword">new</span> SimpleImageLoadingListener();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> ImageLoader instance;</span><br><span class="line">       <span class="comment">//单例，双重加锁</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> ImageLoader getInstance() &#123;</span><br><span class="line">		<span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">synchronized</span> (ImageLoader.<span class="keyword">class</span>) &#123;</span><br><span class="line">				<span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">					instance = <span class="keyword">new</span> ImageLoader();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> instance;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">protected</span> ImageLoader() &#123;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//初始化，必须传递配置项，否则报错</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> init(ImageLoaderConfiguration configuration) &#123;</span><br><span class="line">		<span class="keyword">if</span> (configuration == <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(ERROR_INIT_CONFIG_WITH_NULL);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">this</span>.configuration == <span class="keyword">null</span>) &#123;</span><br><span class="line">			L.d(LOG_INIT_CONFIG);</span><br><span class="line">			engine = <span class="keyword">new</span> ImageLoaderEngine(configuration);</span><br><span class="line">			<span class="keyword">this</span>.configuration = configuration;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			L.w(WARNING_RE_INIT_CONFIG);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//省略很多displayImage各种形参的方法</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">//displayImage最终调用到的方法</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> displayImage(String uri, ImageAware imageAware, DisplayImageOptions <span class="keyword">options</span>,</span><br><span class="line">			ImageLoadingListener listener, ImageLoadingProgressListener progressListener) &#123;</span><br><span class="line">		checkConfiguration();</span><br><span class="line">		<span class="keyword">if</span> (imageAware == <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(ERROR_WRONG_ARGUMENTS);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (listener == <span class="keyword">null</span>) &#123;</span><br><span class="line">			listener = emptyListener;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">options</span> == <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">options</span> = configuration.defaultDisplayImageOptions;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//url为空</span></span><br><span class="line">		<span class="keyword">if</span> (TextUtils.isEmpty(uri)) &#123;</span><br><span class="line">			engine.cancelDisplayTaskFor(imageAware);</span><br><span class="line">			listener.onLoadingStarted(uri, imageAware.getWrappedView());</span><br><span class="line">			<span class="keyword">if</span> (<span class="keyword">options</span>.shouldShowImageForEmptyUri()) &#123;</span><br><span class="line">				imageAware.setImageDrawable(<span class="keyword">options</span>.getImageForEmptyUri(configuration.resources));</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				imageAware.setImageDrawable(<span class="keyword">null</span>);</span><br><span class="line">			&#125;</span><br><span class="line">			listener.onLoadingComplete(uri, imageAware.getWrappedView(), <span class="keyword">null</span>);</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		ImageSize targetSize = ImageSizeUtils.defineTargetSizeForView(imageAware, configuration.getMaxImageSize());</span><br><span class="line">		String memoryCacheKey = MemoryCacheUtils.generateKey(uri, targetSize);</span><br><span class="line">		engine.prepareDisplayTaskFor(imageAware, memoryCacheKey);</span><br><span class="line">		</span><br><span class="line">		listener.onLoadingStarted(uri, imageAware.getWrappedView());</span><br><span class="line">		<span class="comment">//在内存缓存中是否存在</span></span><br><span class="line">		Bitmap bmp = configuration.memoryCache.get(memoryCacheKey);</span><br><span class="line">		<span class="comment">//已存在</span></span><br><span class="line">		<span class="keyword">if</span> (bmp != <span class="keyword">null</span> &amp;&amp; !bmp.isRecycled()) &#123;</span><br><span class="line">			L.d(LOG_LOAD_IMAGE_FROM_MEMORY_CACHE, memoryCacheKey);</span><br><span class="line">		 <span class="comment">//需要处理时进行处理</span></span><br><span class="line">			<span class="keyword">if</span> (<span class="keyword">options</span>.shouldPostProcess()) &#123;</span><br><span class="line">				ImageLoadingInfo imageLoadingInfo = <span class="keyword">new</span> ImageLoadingInfo(uri, imageAware, targetSize, memoryCacheKey,</span><br><span class="line">						<span class="keyword">options</span>, listener, progressListener, engine.getLockForUri(uri));</span><br><span class="line">				ProcessAndDisplayImageTask displayTask = <span class="keyword">new</span> ProcessAndDisplayImageTask(engine, bmp, imageLoadingInfo,</span><br><span class="line">						defineHandler(<span class="keyword">options</span>));</span><br><span class="line">				<span class="keyword">if</span> (<span class="keyword">options</span>.isSyncLoading()) &#123;</span><br><span class="line">					displayTask.run();</span><br><span class="line">				&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">					engine.submit(displayTask);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				<span class="comment">//直接调用显示模块显示</span></span><br><span class="line">				<span class="keyword">options</span>.getDisplayer().display(bmp, imageAware, LoadedFrom.MEMORY_CACHE);</span><br><span class="line">				listener.onLoadingComplete(uri, imageAware.getWrappedView(), bmp);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="comment">//显示默认值</span></span><br><span class="line">			<span class="keyword">if</span> (<span class="keyword">options</span>.shouldShowImageOnLoading()) &#123;</span><br><span class="line">				imageAware.setImageDrawable(<span class="keyword">options</span>.getImageOnLoading(configuration.resources));</span><br><span class="line">			&#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">options</span>.isResetViewBeforeLoading()) &#123;</span><br><span class="line">				imageAware.setImageDrawable(<span class="keyword">null</span>);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			ImageLoadingInfo imageLoadingInfo = <span class="keyword">new</span> ImageLoadingInfo(uri, imageAware, targetSize, memoryCacheKey,</span><br><span class="line">					<span class="keyword">options</span>, listener, progressListener, engine.getLockForUri(uri));</span><br><span class="line">			LoadAndDisplayImageTask displayTask = <span class="keyword">new</span> LoadAndDisplayImageTask(engine, imageLoadingInfo,</span><br><span class="line">					defineHandler(<span class="keyword">options</span>));</span><br><span class="line">			<span class="keyword">if</span> (<span class="keyword">options</span>.isSyncLoading()) &#123;</span><br><span class="line">				displayTask.run();</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				engine.submit(displayTask);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">//loadImage,最终仍调用displayImage但imageAware是个NonViewAware</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> loadImage(String uri, ImageSize targetImageSize, DisplayImageOptions <span class="keyword">options</span>,</span><br><span class="line">			ImageLoadingListener listener, ImageLoadingProgressListener progressListener) &#123;</span><br><span class="line">		checkConfiguration();</span><br><span class="line">		<span class="keyword">if</span> (targetImageSize == <span class="keyword">null</span>) &#123;</span><br><span class="line">			targetImageSize = configuration.getMaxImageSize();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">options</span> == <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">options</span> = configuration.defaultDisplayImageOptions;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		NonViewAware imageAware = <span class="keyword">new</span> NonViewAware(uri, targetImageSize, ViewScaleType.CROP);</span><br><span class="line">		displayImage(uri, imageAware, <span class="keyword">options</span>, listener, progressListener);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ImageLoaderEngine引擎，负责提交任务给各线程池">ImageLoaderEngine引擎，负责提交任务给各线程池</h2><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> ImageLoaderEngine &#123;</span><br><span class="line">      ...</span><br><span class="line">	<span class="comment">/** Submits task to execution pool */</span></span><br><span class="line">	<span class="keyword">void</span> submit(<span class="keyword">final</span> LoadAndDisplayImageTask <span class="keyword">task</span>) &#123;</span><br><span class="line">		taskDistributor.execute(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">			@Override</span><br><span class="line">			<span class="keyword">public</span> <span class="keyword">void</span> run() &#123;</span><br><span class="line">				<span class="keyword">File</span> image = configuration.diskCache.get(<span class="keyword">task</span>.getLoadingUri());</span><br><span class="line">				<span class="keyword">boolean</span> isImageCachedOnDisk = image != <span class="keyword">null</span> &amp;&amp; image.exists();</span><br><span class="line">				initExecutorsIfNeed();</span><br><span class="line">				<span class="keyword">if</span> (isImageCachedOnDisk) &#123;</span><br><span class="line">					taskExecutorForCachedImages.execute(<span class="keyword">task</span>);</span><br><span class="line">				&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">					taskExecutor.execute(<span class="keyword">task</span>);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/** Submits task to execution pool */</span></span><br><span class="line">	<span class="keyword">void</span> submit(ProcessAndDisplayImageTask <span class="keyword">task</span>) &#123;</span><br><span class="line">		initExecutorsIfNeed();</span><br><span class="line">		taskExecutorForCachedImages.execute(<span class="keyword">task</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="各task解析">各task解析</h2><p>所谓task,就是实现runnable接口的类</p>
+<h3 id="LoadAndDisplayImageTask">LoadAndDisplayImageTask</h3><p>负责从网络或者本地获得bitmap，经过处理器处理后（可没有处理器），交给DisplayBitmapTask负责后续显示逻辑<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">	public void <span class="keyword">run</span>() &#123;</span><br><span class="line">		<span class="keyword">if</span> (waitIfPaused()) <span class="keyword">return</span>;</span><br><span class="line">		<span class="keyword">if</span> (delayIfNeed()) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">		ReentrantLock loadFromUriLock = imageLoadingInfo.loadFromUriLock;</span><br><span class="line">		<span class="keyword">L</span>.<span class="literal">d</span>(LOG_START_DISPLAY_IMAGE_TASK, memoryCacheKey);</span><br><span class="line">		<span class="keyword">if</span> (loadFromUriLock.isLocked()) &#123;</span><br><span class="line">			<span class="keyword">L</span>.<span class="literal">d</span>(LOG_WAITING_FOR_IMAGE_LOADED, memoryCacheKey);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		loadFromUriLock.lock();</span><br><span class="line">		Bitmap bmp;</span><br><span class="line">		try &#123;</span><br><span class="line">			checkTaskNotActual();</span><br><span class="line">		<span class="comment">//查看内存缓存中是否已存在</span></span><br><span class="line">			bmp = configuration.memoryCache.<span class="literal">get</span>(memoryCacheKey);</span><br><span class="line">			<span class="keyword">if</span> (bmp == null || bmp.isRecycled()) &#123;</span><br><span class="line">				<span class="comment">//获取butmap</span></span><br><span class="line">				bmp = tryLoadBitmap();</span><br><span class="line">				<span class="keyword">if</span> (bmp == null) <span class="keyword">return</span>; <span class="comment">// listener callback already was fired</span></span><br><span class="line"></span><br><span class="line">				checkTaskNotActual();</span><br><span class="line">				checkTaskInterrupted();</span><br><span class="line"></span><br><span class="line">				<span class="keyword">if</span> (options.shouldPreProcess()) &#123;</span><br><span class="line">					<span class="keyword">L</span>.<span class="literal">d</span>(LOG_PREPROCESS_IMAGE, memoryCacheKey);</span><br><span class="line">					bmp = options.getPreProcessor().process(bmp);</span><br><span class="line">					<span class="keyword">if</span> (bmp == null) &#123;</span><br><span class="line">						<span class="keyword">L</span>.<span class="literal">e</span>(ERROR_PRE_PROCESSOR_NULL, memoryCacheKey);</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				<span class="keyword">if</span> (bmp != null &amp;&amp; options.isCacheInMemory()) &#123;</span><br><span class="line">					<span class="keyword">L</span>.<span class="literal">d</span>(LOG_CACHE_IMAGE_IN_MEMORY, memoryCacheKey);</span><br><span class="line">					configuration.memoryCache.put(memoryCacheKey, bmp);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				loadedFrom = LoadedFrom.MEMORY_CACHE;</span><br><span class="line">				<span class="keyword">L</span>.<span class="literal">d</span>(LOG_GET_IMAGE_FROM_MEMORY_CACHE_AFTER_WAITING, memoryCacheKey);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (bmp != null &amp;&amp; options.shouldPostProcess()) &#123;</span><br><span class="line">				<span class="keyword">L</span>.<span class="literal">d</span>(LOG_POSTPROCESS_IMAGE, memoryCacheKey);</span><br><span class="line">				bmp = options.getPostProcessor().process(bmp);</span><br><span class="line">				<span class="keyword">if</span> (bmp == null) &#123;</span><br><span class="line">					<span class="keyword">L</span>.<span class="literal">e</span>(ERROR_POST_PROCESSOR_NULL, memoryCacheKey);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			checkTaskNotActual();</span><br><span class="line">			checkTaskInterrupted();</span><br><span class="line">		&#125; catch (TaskCancelledException <span class="keyword">e</span>) &#123;</span><br><span class="line">			fireCancelEvent();</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125; finally &#123;</span><br><span class="line">			loadFromUriLock.unlock();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		DisplayBitmapTask displayBitmapTask = new DisplayBitmapTask(bmp, imageLoadingInfo, engine, loadedFrom);</span><br><span class="line">		runTask(displayBitmapTask, syncLoading, handler, engine);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	private Bitmap tryLoadBitmap() throws TaskCancelledException &#123;</span><br><span class="line">		Bitmap bitmap = null;</span><br><span class="line">		try &#123;</span><br><span class="line">		<span class="comment">//磁盘缓存中是否已存在</span></span><br><span class="line">			<span class="keyword">File</span> imageFile = configuration.diskCache.<span class="literal">get</span>(uri);</span><br><span class="line">			<span class="keyword">if</span> (imageFile != null &amp;&amp; imageFile.exists()) &#123;</span><br><span class="line">				<span class="keyword">L</span>.<span class="literal">d</span>(LOG_LOAD_IMAGE_FROM_DISK_CACHE, memoryCacheKey);</span><br><span class="line">				loadedFrom = LoadedFrom.DISC_CACHE;</span><br><span class="line"></span><br><span class="line">				checkTaskNotActual();</span><br><span class="line">				bitmap = decodeImage(Scheme.<span class="keyword">FILE</span>.wrap(imageFile.getAbsolutePath()));</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> (bitmap == null || bitmap.getWidth() &lt;= 0 || bitmap.getHeight() &lt;= 0) &#123;</span><br><span class="line">				<span class="keyword">L</span>.<span class="literal">d</span>(LOG_LOAD_IMAGE_FROM_NETWORK, memoryCacheKey);</span><br><span class="line">				loadedFrom = LoadedFrom.NETWORK;</span><br><span class="line"></span><br><span class="line">				String imageUriForDecoding = uri;</span><br><span class="line">				<span class="keyword">if</span> (options.isCacheOnDisk() &amp;&amp; tryCacheImageOnDisk()) &#123;</span><br><span class="line">					imageFile = configuration.diskCache.<span class="literal">get</span>(uri);</span><br><span class="line">					<span class="keyword">if</span> (imageFile != null) &#123;</span><br><span class="line">						imageUriForDecoding = Scheme.<span class="keyword">FILE</span>.wrap(imageFile.getAbsolutePath());</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				checkTaskNotActual();</span><br><span class="line">				bitmap = decodeImage(imageUriForDecoding);</span><br><span class="line"></span><br><span class="line">				<span class="keyword">if</span> (bitmap == null || bitmap.getWidth() &lt;= 0 || bitmap.getHeight() &lt;= 0) &#123;</span><br><span class="line">					fireFailEvent(FailType.DECODING_ERROR, null);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; catch (IllegalStateException <span class="keyword">e</span>) &#123;</span><br><span class="line">			fireFailEvent(FailType.NETWORK_DENIED, null);</span><br><span class="line">		&#125; catch (TaskCancelledException <span class="keyword">e</span>) &#123;</span><br><span class="line">			throw <span class="keyword">e</span>;</span><br><span class="line">		&#125; catch (IOException <span class="keyword">e</span>) &#123;</span><br><span class="line">			<span class="keyword">L</span>.<span class="literal">e</span>(<span class="keyword">e</span>);</span><br><span class="line">			fireFailEvent(FailType.IO_ERROR, <span class="keyword">e</span>);</span><br><span class="line">		&#125; catch (OutOfMemoryError <span class="keyword">e</span>) &#123;</span><br><span class="line">			<span class="keyword">L</span>.<span class="literal">e</span>(<span class="keyword">e</span>);</span><br><span class="line">			fireFailEvent(FailType.OUT_OF_MEMORY, <span class="keyword">e</span>);</span><br><span class="line">		&#125; catch (Throwable <span class="keyword">e</span>) &#123;</span><br><span class="line">			<span class="keyword">L</span>.<span class="literal">e</span>(<span class="keyword">e</span>);</span><br><span class="line">			fireFailEvent(FailType.UNKNOWN, <span class="keyword">e</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> bitmap;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="ProcessAndDisplayImageTask">ProcessAndDisplayImageTask</h3><p>负责获取到bitmap后进行前置处理，处理完成后交给DisplayBitmapTask负责显示<br><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		L.d(LOG_POSTPROCESS_IMAGE, imageLoadingInfo.memoryCacheKey);</span><br><span class="line"></span><br><span class="line">		BitmapProcessor processor = imageLoadingInfo.options.getPostProcessor();</span><br><span class="line">		Bitmap processedBitmap = processor.process(bitmap);</span><br><span class="line">		DisplayBitmapTask displayBitmapTask = <span class="keyword">new</span> DisplayBitmapTask(processedBitmap, imageLoadingInfo, engine,</span><br><span class="line">				LoadedFrom.MEMORY_CACHE);</span><br><span class="line"><span class="comment">//静态方法，只是扔给线程池处理，与LoadAndDisplayImageTask无关</span></span><br><span class="line">		LoadAndDisplayImageTask.runTask(displayBitmapTask, imageLoadingInfo.options.isSyncLoading(), <span class="keyword">handler</span>, engine);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="DisplayBitmapTask">DisplayBitmapTask</h3><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">	public void <span class="keyword">run</span>() &#123;</span><br><span class="line">		<span class="keyword">if</span> (imageAware.isCollected()) &#123;</span><br><span class="line">			<span class="keyword">L</span>.<span class="literal">d</span>(LOG_TASK_CANCELLED_IMAGEAWARE_COLLECTED, memoryCacheKey);</span><br><span class="line">			listener.onLoadingCancelled(imageUri, imageAware.getWrappedView());</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (isViewWasReused()) &#123;</span><br><span class="line">			<span class="keyword">L</span>.<span class="literal">d</span>(LOG_TASK_CANCELLED_IMAGEAWARE_REUSED, memoryCacheKey);</span><br><span class="line">			listener.onLoadingCancelled(imageUri, imageAware.getWrappedView());</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">L</span>.<span class="literal">d</span>(LOG_DISPLAY_IMAGE_IN_IMAGEAWARE, loadedFrom, memoryCacheKey);</span><br><span class="line">			displayer.<span class="keyword">display</span>(bitmap, imageAware, loadedFrom);</span><br><span class="line">			engine.cancelDisplayTaskFor(imageAware);</span><br><span class="line">			listener.onLoadingComplete(imageUri, imageAware.getWrappedView(), bitmap);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="downloader">downloader</h2><p>负责从网络和本地获取流，以下BaseImageDownloader为getStream方法<br><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="function">InputStream <span class="title">getStream</span><span class="params">(String imageUri, Object extra)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">	<span class="keyword">switch</span> (Scheme.ofUri(imageUri)) &#123;</span><br><span class="line">		<span class="keyword">case</span> HTTP:</span><br><span class="line">		<span class="keyword">case</span> HTTPS:</span><br><span class="line">			<span class="keyword">return</span> getStreamFromNetwork(imageUri, extra);</span><br><span class="line">		<span class="keyword">case</span> FILE:</span><br><span class="line">			<span class="keyword">return</span> getStreamFromFile(imageUri, extra);</span><br><span class="line">		<span class="keyword">case</span> CONTENT:</span><br><span class="line">			<span class="keyword">return</span> getStreamFromContent(imageUri, extra);</span><br><span class="line">		<span class="keyword">case</span> ASSETS:</span><br><span class="line">			<span class="keyword">return</span> getStreamFromAssets(imageUri, extra);</span><br><span class="line">		<span class="keyword">case</span> DRAWABLE:</span><br><span class="line">			<span class="keyword">return</span> getStreamFromDrawable(imageUri, extra);</span><br><span class="line">		<span class="keyword">case</span> UNKNOWN:</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			<span class="keyword">return</span> getStreamFromOtherSource(imageUri, extra);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="decoder">decoder</h2><p>以下为BaseImageDecoder的decode方法，将输入流转化为bitmap<br><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line">	<span class="keyword">public</span> <span class="function">Bitmap <span class="title">decode</span><span class="params">(ImageDecodingInfo decodingInfo)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">		Bitmap decodedBitmap;</span><br><span class="line">		ImageFileInfo imageInfo;</span><br><span class="line"></span><br><span class="line">		InputStream imageStream = getImageStream(decodingInfo);</span><br><span class="line">		<span class="keyword">if</span> (imageStream == <span class="keyword">null</span>) &#123;</span><br><span class="line">			L.e(ERROR_NO_IMAGE_STREAM, decodingInfo.getImageKey());</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			imageInfo = defineImageSizeAndRotation(imageStream, decodingInfo);</span><br><span class="line">			imageStream = resetStream(imageStream, decodingInfo);</span><br><span class="line">			Options decodingOptions = prepareDecodingOptions(imageInfo.imageSize, decodingInfo);</span><br><span class="line">			decodedBitmap = BitmapFactory.decodeStream(imageStream, <span class="keyword">null</span>, decodingOptions);</span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">			IoUtils.closeSilently(imageStream);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (decodedBitmap == <span class="keyword">null</span>) &#123;</span><br><span class="line">			L.e(ERROR_CANT_DECODE_IMAGE, decodingInfo.getImageKey());</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			decodedBitmap = considerExactScaleAndOrientatiton(decodedBitmap, decodingInfo, imageInfo.exif.rotation,</span><br><span class="line">					imageInfo.exif.flipHorizontal);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> decodedBitmap;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="displayer">displayer</h2><p>将bitmap显示出来,以下为SimpleBitmapDisplayer display方法<br><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">display</span><span class="params">(Bitmap bitmap, ImageAware imageAware, LoadedFrom loadedFrom)</span> </span>&#123;</span><br><span class="line">	imageAware.setImageBitmap(bitmap);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="总结">总结</h1><p>1.作者模块功能划分的很好，各模块职责清晰，但对部分功能调用上有些混乱.<br>如存在没有使用processAndDisplayImageTask而在外部直接调用postProcesser,没有使用DisplayImageTask而在外部直接调用displayer,这部分关系较为混乱<br>2.所谓的downloader实际上是包括加载网络和本地，和通常理解的概念有偏差，loadedFrom枚举类里面的network竟然也包括本地文件，堪称坑爹。<br>3.可配置性很强，可以添加自己的各种模块，比如下载器，解析器，cache,线程池等</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/uil/">uil</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://coderrobin.com/2015/02/08/开源项目解析-Android-Universal-Image-Loader/" data-title="开源项目解析-Android-Universal-Image-Loader | An Android Coder" data-tsina="undefined" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/02/11/Android-RecyclerView使用/" title="Android RecyclerView使用及自定义itemAnimator">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Android RecyclerView使用及自定义itemAnimator</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/02/05/Android-LoaderManager源码分析/"  title="Android Loader解析">
+ <strong>下一篇：</strong><br/> 
+ <span>Android Loader解析
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/02/08/开源项目解析-Android-Universal-Image-Loader/" data-title="开源项目解析-Android-Universal-Image-Loader" data-url="http://coderrobin.com/2015/02/08/开源项目解析-Android-Universal-Image-Loader/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#使用"><span class="toc-number">2.</span> <span class="toc-text">使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#初始化与配置ImageLoader"><span class="toc-number">2.1.</span> <span class="toc-text">初始化与配置ImageLoader</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#加载配置项"><span class="toc-number">2.2.</span> <span class="toc-text">加载配置项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载与加载图片"><span class="toc-number">2.3.</span> <span class="toc-text">下载与加载图片</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其它TIP"><span class="toc-number">2.4.</span> <span class="toc-text">其它TIP</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#源码分析"><span class="toc-number">3.</span> <span class="toc-text">源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#uil涉及到的模块与概念"><span class="toc-number">3.1.</span> <span class="toc-text">uil涉及到的模块与概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ViewAware分析，对view控件的封装,ImageViewAware即继承该类"><span class="toc-number">3.2.</span> <span class="toc-text">ViewAware分析，对view控件的封装,ImageViewAware即继承该类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ImageLoader类分析"><span class="toc-number">3.3.</span> <span class="toc-text">ImageLoader类分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ImageLoaderEngine引擎，负责提交任务给各线程池"><span class="toc-number">3.4.</span> <span class="toc-text">ImageLoaderEngine引擎，负责提交任务给各线程池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#各task解析"><span class="toc-number">3.5.</span> <span class="toc-text">各task解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LoadAndDisplayImageTask"><span class="toc-number">3.5.1.</span> <span class="toc-text">LoadAndDisplayImageTask</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ProcessAndDisplayImageTask"><span class="toc-number">3.5.2.</span> <span class="toc-text">ProcessAndDisplayImageTask</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DisplayBitmapTask"><span class="toc-number">3.5.3.</span> <span class="toc-text">DisplayBitmapTask</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#downloader"><span class="toc-number">3.6.</span> <span class="toc-text">downloader</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#decoder"><span class="toc-number">3.7.</span> <span class="toc-text">decoder</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#displayer"><span class="toc-number">3.8.</span> <span class="toc-text">displayer</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Android/" title="Android">Android<sup>15</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/读书笔记/" title="读书笔记">读书笔记<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/动画/" title="动画">动画<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/自定义控件/" title="自定义控件">自定义控件<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Annotation/" title="Annotation">Annotation<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ReentrantLock/" title="ReentrantLock">ReentrantLock<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/fragment/" title="fragment">fragment<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/viewpager/" title="viewpager">viewpager<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/uil/" title="uil">uil<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CustomViews/" title="CustomViews">CustomViews<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/自定义控件布局/" title="自定义控件布局">自定义控件布局<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PagerSlidingTabStrip/" title="PagerSlidingTabStrip">PagerSlidingTabStrip<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EventBus/" title="EventBus">EventBus<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/volley/" title="volley">volley<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/反射/" title="反射">反射<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/RecyclerView/" title="RecyclerView">RecyclerView<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LoaderManager/" title="LoaderManager">LoaderManager<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.codekk.com/" target="_blank" title="codekk开源项目解析">codekk开源项目解析</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.trinea.cn/" target="_blank" title="Trinea">Trinea</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.daimajia.com/" target="_blank" title="代码家">代码家</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://stormzhang.com/" target="_blank" title="stormzhang">stormzhang</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/xiaanming/" target="_blank" title="夏安明">夏安明</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/bboyfeiyu" target="_blank" title="Mr.Simple">Mr.Simple</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/aigestudio/" target="_blank" title="AigeSudio">AigeSudio</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.rainstops.com/" target="_blank" title="rainstops">rainstops</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/sunzn/" target="_blank" title="sunzn&#39;Blog">sunzn&#39;Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/guolin_blog" target="_blank" title="郭霖">郭霖</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/lmj623565791" target="_blank" title="鸿洋">鸿洋</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m CoderRobin. <br/>
+			Welcome here to enjoy android.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/206001274" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/CoderRobin" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:rzb7873@hotmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="http://coderrobin.com/about" target="_blank" title="CoderRobin">CoderRobin</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"rzb7873"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

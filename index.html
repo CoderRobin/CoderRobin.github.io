@@ -1,0 +1,1057 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>An Android Coder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="CoderRobin">
+    
+
+    
+    <meta name="description" content="CoderRobin">
+<meta property="og:type" content="website">
+<meta property="og:title" content="An Android Coder">
+<meta property="og:url" content="http://coderrobin.com/index.html">
+<meta property="og:site_name" content="An Android Coder">
+<meta property="og:description" content="CoderRobin">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="An Android Coder">
+<meta name="twitter:description" content="CoderRobin">
+
+    
+    <link rel="alternative" href="/atom.xml" title="An Android Coder" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="An Android Coder">An Android Coder</a></h1>
+				<h2 class="blog-motto">CoderRobin&#39;s Blog</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:coderrobin.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main">
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/04/06/gradle笔记/" title="gradle笔记" itemprop="url">gradle笔记</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://coderrobin.com/about" title="CoderRobin" target="_blank" itemprop="author">CoderRobin</a>
+		
+  <p class="article-time">
+    <time datetime="2015-04-06T02:36:32.000Z" itemprop="datePublished"> 发表于 Apr 6 2015</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h1 id="范例">范例</h1><h2 id="{@projectName}/build-gradle">{@projectName}/build.gradle</h2><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">buildscript</span> &#123;</span><br><span class="line">	<span class="keyword">repositories</span> &#123;</span><br><span class="line">    	jcenter()</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">dependencies</span> &#123;</span><br><span class="line">	<span class="comment">//gradle版本</span></span><br><span class="line">    	<span class="keyword">classpath</span> <span class="string">'com.android.tools.build:gradle:1.0.0'</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">allprojects</span> &#123;</span><br><span class="line">	<span class="keyword">repositories</span> &#123;</span><br><span class="line">    	jcenter()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="{@projectName}/settings-gradle">{@projectName}/settings.gradle</h2><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//包含的module</span></span><br><span class="line"> <span class="keyword">include</span> <span class="string">':app'</span>, <span class="string">':library'</span></span><br></pre></td></tr></table></figure>
+<h2 id="{@ModuleName}/build-gradle">{@ModuleName}/build.gradle</h2><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//声明使用的插件，表明要编译的内容和产物</span></span><br><span class="line">apply plugin:</span><br><span class="line"> <span class="string">'com.android.application'</span>   表明该module为android应用，产生apk</span><br><span class="line"><span class="string">'com.android.library'</span> 表明module为android库，产生jar包或aar</span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">    <span class="comment">// 编译SDK的版本</span></span><br><span class="line">    compileSdkVersion <span class="number">21</span></span><br><span class="line">    <span class="comment">// build tools的版本</span></span><br><span class="line">    buildToolsVersion <span class="string">"21.1.1"</span></span><br><span class="line"></span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        <span class="comment">// 应用的包名</span></span><br><span class="line">        applicationId <span class="string">"com.coderrobin.test"</span></span><br><span class="line">	<span class="comment">//支持的最小android sdk版本</span></span><br><span class="line">        minSdkVersion <span class="number">14</span> </span><br><span class="line">	<span class="comment">//目标版本（编译用的sdk）</span></span><br><span class="line">        targetSdkVersion <span class="number">21</span></span><br><span class="line">	<span class="comment">//版本号</span></span><br><span class="line">        versionCode <span class="number">1</span></span><br><span class="line">	<span class="comment">//版本名称</span></span><br><span class="line">        versionName <span class="string">"1.0.0"</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// java版本</span></span><br><span class="line">    compileOptions &#123;</span><br><span class="line">        <span class="keyword">sourceCompatibility</span> JavaVersion.VERSION_1_7</span><br><span class="line">        <span class="keyword">targetCompatibility</span> JavaVersion.VERSION_1_7</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">signingConfigs &#123;</span><br><span class="line">   release&#123;</span><br><span class="line">       storeFile <span class="keyword">file</span>(<span class="string">"gradle.keystore"</span>)</span><br><span class="line">    	storePassword <span class="string">"gradle"</span></span><br><span class="line">    	keyAlias <span class="string">"gradle"</span></span><br><span class="line">    	keyPassword <span class="string">"gradle"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//编译类型</span></span><br><span class="line">buildTypes &#123;</span><br><span class="line">	release &#123;</span><br><span class="line">	</span><br><span class="line">    	applicationIdSuffix <span class="string">'.release'</span></span><br><span class="line">    	signingConfig signingConfigs.release</span><br><span class="line">    	zipAlignEnabled <span class="keyword">false</span></span><br><span class="line">	&#125;</span><br><span class="line">	debug &#123;</span><br><span class="line">    	applicationIdSuffix <span class="string">'.debug'</span></span><br><span class="line">    	zipAlignEnabled <span class="keyword">false</span></span><br><span class="line">	&#125;</span><br><span class="line">	buildtypesnochange &#123;</span><br><span class="line">    	signingConfig signingConfigs.release</span><br><span class="line">    	zipAlignEnabled <span class="keyword">false</span></span><br><span class="line">	&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	productFlavors &#123;</span><br><span class="line">		playstore &#123;</span><br><span class="line">    			applicationId <span class="string">'com.coderrobin.test.playstore'</span></span><br><span class="line">		&#125;</span><br><span class="line">		amazonstore &#123;</span><br><span class="line">    			applicationId <span class="string">'com.coderrobin.test.amazonstore'</span></span><br><span class="line">		&#125;</span><br><span class="line">	productflavorsnochange &#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 移除lint检查的error</span></span><br><span class="line">    lintOptions &#123;</span><br><span class="line">      abortOnError <span class="keyword">false</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    <span class="comment">// 编译libs目录下的所有jar包</span></span><br><span class="line">    <span class="keyword">compile</span> <span class="keyword">fileTree</span>(dir: <span class="string">'libs'</span>, <span class="keyword">include</span>: [<span class="string">'*.jar'</span>])</span><br><span class="line">    <span class="keyword">compile</span> <span class="string">'com.android.support:support-v4:21.0.2'</span></span><br><span class="line">    <span class="keyword">compile</span> <span class="keyword">project</span>(<span class="string">':libs'</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Groovy_的基本语法">Groovy 的基本语法</h1><h2 id="方法调用">方法调用</h2><p>apply plugin: ‘com.android.application’<br>以上语句中的apply是一个方法，给它传递了一个参数plugin，plugin 的值是’com.android.application</p>
+<h2 id="闭包">闭包</h2><p>Groovy中花括号包含的部分为一个闭包（Closure）。例如下面的代码<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> compileOptions &#123;  </span><br><span class="line">        <span class="keyword">sourceCompatibility</span> JavaVersion.VERSION_1_7  </span><br><span class="line">        <span class="keyword">targetCompatibility</span> JavaVersion.VERSION_1_7  </span><br><span class="line">    &#125;</span><br><span class="line">```  </span><br><span class="line">compileOptions 是一个方法， 它的参数是一个闭包，这个闭包内依次执行了两个方法 -- <span class="keyword">sourceCompatibility</span> 和<span class="keyword">targetCompatibility</span>， 参数都是JavaVersion.VERSION17。</span><br><span class="line"></span><br><span class="line">##闭包嵌套</span><br></pre></td></tr></table></figure></p>
+<p> signingConfigs {<br>   release{<br>       storeFile file(“gradle.keystore”)<br>        storePassword “gradle”<br>        keyAlias “gradle”<br>        keyPassword “gradle”<br>    }<br>}<br>```<br>signingConfigs是一个方法，参数为一个闭包，该闭包中有release方法，其参数是一个闭包，该闭包内含有storeFile，storePassword,keyAlias,keyPassword方法</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/读书笔记/">读书笔记</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/gradle/">gradle</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/04/06/gradle笔记/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/04/06/gradle笔记/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/03/05/Android-Spinner设置下拉框高度/" title="Android Spinner设置下拉框高度" itemprop="url">Android Spinner设置下拉框高度</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://coderrobin.com/about" title="CoderRobin" target="_blank" itemprop="author">CoderRobin</a>
+		
+  <p class="article-time">
+    <time datetime="2015-03-05T14:32:25.000Z" itemprop="datePublished"> 发表于 Mar 5 2015</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>最近有用到Spinner控件，然后查了下api再google了一圈，竟然发现没有设置下拉框高度的接口。于是大概看了下spinner源码。发现其中有个私有成员变量SpinnerPopup mPopup便是下拉框控件，当spinner mode是 MODE_DROPDOWN,实际上是一个DropdownPopu，该类又继承了ListPopupWindow，而listPopupwindow有个getListview方法 得到实际展示的listview，于是便可以利用反射实现了设置spinner下拉框的高度和下拉框的listview的各种属性，代码如下：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDropDownHeight</span><span class="params">(<span class="keyword">int</span> pHeight)</span></span>&#123;</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		Field field=Spinner.<span class="keyword">class</span>.getDeclaredField(<span class="string">"mPopup"</span>);</span><br><span class="line">		field.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">		ListPopupWindow popUp=(ListPopupWindow)field.get(mSpinner);</span><br><span class="line">		popUp.setHeight(pHeight);</span><br><span class="line">	&#125; <span class="keyword">catch</span> (NoSuchFieldException e) &#123;</span><br><span class="line">		e.printStackTrace();</span><br><span class="line">	&#125; <span class="keyword">catch</span> (SecurityException e) &#123;</span><br><span class="line">		e.printStackTrace();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/反射/">反射</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/03/05/Android-Spinner设置下拉框高度/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/03/05/Android-Spinner设置下拉框高度/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/03/02/Java-Annotation基础/" title="Java Annotation基础" itemprop="url">Java Annotation基础</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://coderrobin.com/about" title="CoderRobin" target="_blank" itemprop="author">CoderRobin</a>
+		
+  <p class="article-time">
+    <time datetime="2015-03-02T14:12:37.000Z" itemprop="datePublished"> 发表于 Mar 2 2015</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h1 id="简介">简介</h1><p>在Android开发中，为了提高开发效率，各个注解框架（如Butter Knife，Dagger 等）越来越流行，为了方便理解和使用这些注解框架，需要对Java Annotation有个初步的了解。<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/03/02/Java-Annotation基础/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/java/">java</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Annotation/">Annotation</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/03/02/Java-Annotation基础/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/03/02/Java-Annotation基础/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/02/21/Android-Volley解析/" title="Android Volley解析" itemprop="url">Android Volley解析</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://coderrobin.com/about" title="CoderRobin" target="_blank" itemprop="author">CoderRobin</a>
+		
+  <p class="article-time">
+    <time datetime="2015-02-21T15:47:52.000Z" itemprop="datePublished"> 发表于 Feb 21 2015</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h1 id="简介">简介</h1><p>Volley是android官方提供的进行网络请求的框架，亦包括了对网络图片加载的功能。特别适用于请求次数较多但数据量较小的情况。<br>已经有大神对volley进行了较详细的解析，本篇博文也只是写写自己的理解。<br>郭霖：<br>Android Volley完全解析<br><a href="http://blog.csdn.net/guolin_blog/article/details/17656437">http://blog.csdn.net/guolin_blog/article/details/17656437</a><br>codekk:<br>Volley 源码解析<br><a href="http://www.codekk.com/open-source-project-analysis/detail/Android/grumoon/Volley%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90">http://www.codekk.com/open-source-project-analysis/detail/Android/grumoon/Volley%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90</a><br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/02/21/Android-Volley解析/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/volley/">volley</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/02/21/Android-Volley解析/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/02/21/Android-Volley解析/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/02/13/Android开源项目-EventBus分析/" title="开源项目-EventBus分析" itemprop="url">开源项目-EventBus分析</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://coderrobin.com/about" title="CoderRobin" target="_blank" itemprop="author">CoderRobin</a>
+		
+  <p class="article-time">
+    <time datetime="2015-02-13T15:18:48.000Z" itemprop="datePublished"> 发表于 Feb 13 2015</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="简介">简介</h2><p>EventBus 是一个事件发布/订阅框架，通过解耦发布者和订阅者简化 Android 事件传递，事件传递既可用于 Android 四大组件间通讯，也可以用户异步线程和主线程间通讯等等。<br>传统的事件传递方式包括：Handler、BroadCastReceiver、回调等，相比之下 EventBus 的优点是代码简洁，使用简单，并将事件发布和订阅充分解耦。尤其在代码分层比较多时，需要层次往上传递，写很多回调事件。这时候就可以使用eventbus取代之。<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/02/13/Android开源项目-EventBus分析/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/EventBus/">EventBus</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/02/13/Android开源项目-EventBus分析/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/02/13/Android开源项目-EventBus分析/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/02/12/java并发编程基础-ReentrantLock/" title="java并发编程基础-ReentrantLock及LinkedBlockingQueue源码分析" itemprop="url">java并发编程基础-ReentrantLock及LinkedBlockingQueue源码分析</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://coderrobin.com/about" title="CoderRobin" target="_blank" itemprop="author">CoderRobin</a>
+		
+  <p class="article-time">
+    <time datetime="2015-02-12T15:57:48.000Z" itemprop="datePublished"> 发表于 Feb 12 2015</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>ReentrantLock是一个较为常用的锁对象。在上次分析的uil开源项目中也多次被用到，下面谈谈其概念和基本使用。</p>
+<h1 id="概念">概念</h1><p>一个可重入的互斥锁定 Lock，它具有与使用 synchronized 相同的一些基本行为和语义，但功能更强大。</p>
+<h2 id="名词解释：">名词解释：</h2><h3 id="互斥">互斥</h3><p>表示同一时刻，多个线程中，只能有一个线程能获得该锁。但是多个线程都可以调用lock方法，只有一个会成功，其他的线程会被阻塞，直到该锁被释放</p>
+<h3 id="可重入">可重入</h3><p>模仿synchronized 的语义；如果线程进入由线程已经拥有的监控器保护的 synchronized 块，就允许线程继续进行，当线程退出第二个（或者后续）synchronized 块的时候，不释放锁，只有线程退出它进入的监控器保护的第一个 synchronized 块时，才释放锁。<br>对于ReentrantLock，每次获得锁，并将请求计数置为一，如果同一个线程再次lock，计数器将递增，每次unlock时计数器值递减，直到计数器为0，锁释放<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/02/12/java并发编程基础-ReentrantLock/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/java/">java</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/ReentrantLock/">ReentrantLock</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/02/12/java并发编程基础-ReentrantLock/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/02/12/java并发编程基础-ReentrantLock/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/02/11/Android-RecyclerView使用/" title="Android RecyclerView使用及自定义itemAnimator" itemprop="url">Android RecyclerView使用及自定义itemAnimator</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://coderrobin.com/about" title="CoderRobin" target="_blank" itemprop="author">CoderRobin</a>
+		
+  <p class="article-time">
+    <time datetime="2015-02-11T15:14:29.000Z" itemprop="datePublished"> 发表于 Feb 11 2015</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h1 id="简介">简介</h1><p>14年google io上google就开放了RecyclerView，导入support-v7包即可使用。<br>RecyclerView可以认为是AbsListview的升级版，但自带了对viewholder的使用，<br>与listview缓存convertview不同的是,Recyclerview缓存的是viewholder.<br>对每个item的动画也有较好的支持。<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/02/11/Android-RecyclerView使用/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/RecyclerView/">RecyclerView</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/02/11/Android-RecyclerView使用/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/02/11/Android-RecyclerView使用/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/02/08/开源项目解析-Android-Universal-Image-Loader/" title="开源项目解析-Android-Universal-Image-Loader" itemprop="url">开源项目解析-Android-Universal-Image-Loader</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://coderrobin.com/about" title="CoderRobin" target="_blank" itemprop="author">CoderRobin</a>
+		
+  <p class="article-time">
+    <time datetime="2015-02-08T14:42:26.000Z" itemprop="datePublished"> 发表于 Feb 8 2015</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h1 id="简介">简介</h1><p>Android-Universal-Image-Loader是一个用来加载图片（包括网络图片和本地图片）的开源项目，实现了网络图片的下载、本地图片的加载、图片的解析、图片的缓存等机制。<br>其实很多大神都已经解析过此开源项目。<br>包括但不限于以下博客<br><a href="http://www.codekk.com/open-source-project-analysis/detail/Android/huxian99/Android%20Universal%20Image%20Loader%20%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90">codekk解析</a><br>夏安明的3篇博文<br><a href="http://blog.csdn.net/xiaanming/article/details/26810303">Android开源框架Universal-Image-Loader完全解析（一）—- 基本介绍及使用</a><br><a href="http://blog.csdn.net/xiaanming/article/details/27525741">Android开源框架Universal-Image-Loader完全解析（二）—- 图片缓存策略详解</a><br><a href="http://blog.csdn.net/xiaanming/article/details/39057201">Android开源框架Universal-Image-Loader完全解析（三）—-源代码解读</a><br> 但我还是继续写这篇博文的原因主要还是让自己好好看下这部分代码。哈哈，大家想要了解的话看上面几篇博客也已经够了。<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/02/08/开源项目解析-Android-Universal-Image-Loader/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/uil/">uil</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/02/08/开源项目解析-Android-Universal-Image-Loader/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/02/08/开源项目解析-Android-Universal-Image-Loader/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/02/05/Android-LoaderManager源码分析/" title="Android Loader解析" itemprop="url">Android Loader解析</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://coderrobin.com/about" title="CoderRobin" target="_blank" itemprop="author">CoderRobin</a>
+		
+  <p class="article-time">
+    <time datetime="2015-02-05T15:02:04.000Z" itemprop="datePublished"> 发表于 Feb 5 2015</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h1 id="简介：">简介：</h1><p>loader机制在android 3.0后加入android framework。其目的在于方便开发人员在activity和fragment中异步地加载数据。（可以替代直接使用线程或者AsyncTask，对需要异步加载的过程进行统一管理）<br>另外loader还有如下特征：<br>1.对数据源变化进行监听，实时更新数据。<br>2.在activity配置发生变化（如横竖屏切换时无需重复加载数据）<br>3.对于CursorLoader，开发人员无需去close cursor，系统会帮忙管理<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/02/05/Android-LoaderManager源码分析/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/LoaderManager/">LoaderManager</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/02/05/Android-LoaderManager源码分析/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/02/05/Android-LoaderManager源码分析/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/02/04/开源项目源码分析-PagerSlidingTabStrip/" title="开源项目源码分析-PagerSlidingTabStrip" itemprop="url">开源项目源码分析-PagerSlidingTabStrip</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://coderrobin.com/about" title="CoderRobin" target="_blank" itemprop="author">CoderRobin</a>
+		
+  <p class="article-time">
+    <time datetime="2015-02-04T14:18:43.000Z" itemprop="datePublished"> 发表于 Feb 4 2015</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>最近在项目中用到了PagerSlidingTabStrip（<a href="https://github.com/astuetz/PagerSlidingTabStrip">github地址</a>），于是就看了下其实现，发现实现不是特别复杂，算是一个学习自定义控件的不错的例子，于是便拿出来跟大家分享下。<br>PagerSlidingTabStrip控件效果如下，支持viewpager滑动时，选项卡联动<br><img src="/image/pagerslidingtab.png" alt="pagerslidingtab" title="pagerslidingtab"></p>
+<h1 id="使用方式">使用方式</h1><p>下面我们先来看看其使用方式</p>
+<h2 id="xml中配置：">xml中配置：</h2><figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;com.astuetz.PagerSlidingTabStrip</span><br><span class="line">       android:<span class="variable">id=</span><span class="string">"@+id/tabs"</span></span><br><span class="line">       android:<span class="variable">layout_width=</span><span class="string">"match_parent"</span></span><br><span class="line">       android:<span class="variable">layout_height=</span>“wrap_content<span class="string">"</span><br><span class="line">      /&gt;</span></span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/02/04/开源项目源码分析-PagerSlidingTabStrip/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/PagerSlidingTabStrip/">PagerSlidingTabStrip</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/02/04/开源项目源码分析-PagerSlidingTabStrip/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/02/04/开源项目源码分析-PagerSlidingTabStrip/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+
+  <nav id="page-nav" class="clearfix">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
+  </nav>
+
+</div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Android/" title="Android">Android<sup>15</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java/" title="java">java<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/读书笔记/" title="读书笔记">读书笔记<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/动画/" title="动画">动画<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/自定义控件/" title="自定义控件">自定义控件<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Annotation/" title="Annotation">Annotation<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/ReentrantLock/" title="ReentrantLock">ReentrantLock<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/gradle/" title="gradle">gradle<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/fragment/" title="fragment">fragment<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/viewpager/" title="viewpager">viewpager<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/uil/" title="uil">uil<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CustomViews/" title="CustomViews">CustomViews<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/自定义控件布局/" title="自定义控件布局">自定义控件布局<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PagerSlidingTabStrip/" title="PagerSlidingTabStrip">PagerSlidingTabStrip<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/EventBus/" title="EventBus">EventBus<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/volley/" title="volley">volley<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/反射/" title="反射">反射<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/RecyclerView/" title="RecyclerView">RecyclerView<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/LoaderManager/" title="LoaderManager">LoaderManager<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.codekk.com/" target="_blank" title="codekk开源项目解析">codekk开源项目解析</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.trinea.cn/" target="_blank" title="Trinea">Trinea</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.daimajia.com/" target="_blank" title="代码家">代码家</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://stormzhang.com/" target="_blank" title="stormzhang">stormzhang</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/xiaanming/" target="_blank" title="夏安明">夏安明</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/bboyfeiyu" target="_blank" title="Mr.Simple">Mr.Simple</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/aigestudio/" target="_blank" title="AigeSudio">AigeSudio</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.rainstops.com/" target="_blank" title="rainstops">rainstops</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/sunzn/" target="_blank" title="sunzn&#39;Blog">sunzn&#39;Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/guolin_blog" target="_blank" title="郭霖">郭霖</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://blog.csdn.net/lmj623565791" target="_blank" title="鸿洋">鸿洋</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m CoderRobin. <br/>
+			Welcome here to enjoy android.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/206001274" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/CoderRobin" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="mailto:rzb7873@hotmail.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="http://coderrobin.com/about" target="_blank" title="CoderRobin">CoderRobin</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"rzb7873"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+ </html>
